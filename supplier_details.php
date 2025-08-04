@@ -7,33 +7,26 @@ if (!isset($_GET['id'])) {
 }
 
 $id = intval($_GET['id']);
-$supplierSql = "SELECT * FROM supplier_table WHERE id_supplier = $id";
-$supplierResult = $conn->query($supplierSql);
+
+// Fetch supplier
+$supplierSql = "SELECT * FROM supplier_table WHERE id_supplier = ?";
+$supplierStmt = $conn->prepare($supplierSql);
+$supplierStmt->bind_param("i", $id);
+$supplierStmt->execute();
+$supplierResult = $supplierStmt->get_result();
 $supplier = $supplierResult->fetch_assoc();
+$supplierStmt->close();
 
-// Insert a dummy order if no matching order is found
-$orderSql = "SELECT * FROM order_table WHERE itemname_order LIKE '%" . $supplier['supply'] . "%' ORDER BY date_of_order DESC LIMIT 1";
-$orderResult = $conn->query($orderSql);
+$supply = $supplier['supply'];
 
-if ($orderResult->num_rows === 0) {
-  // Insert a dummy order
-  $dummyItem = $supplier['supply'];
-  $destination = "BANGKOD";
-  $quantity = rand(100, 1000);
-  $date = date('Y-m-d');
-  $customer = "Inventory";
-
-  $stmt = $conn->prepare("INSERT INTO order_table (customer_name, destination_order, itemname_order, quantity_order, date_of_order) VALUES (?, ?, ?, ?, ?)");
-  $stmt->bind_param("sssds", $customer, $destination, $dummyItem, $quantity, $date);
-  $stmt->execute();
-  $stmt->close();
-
-  // Fetch the newly inserted order
-  $orderSql = "SELECT * FROM order_table WHERE itemname_order LIKE '%" . $supplier['supply'] . "%' ORDER BY date_of_order DESC LIMIT 1";
-  $orderResult = $conn->query($orderSql);
-}
-
+// Fetch only existing pending orders that match this supplier's supply
+$orderSql = "SELECT * FROM order_table WHERE itemname_order = ? ORDER BY date_of_order DESC LIMIT 1";
+$stmt = $conn->prepare($orderSql);
+$stmt->bind_param("s", $supply);
+$stmt->execute();
+$orderResult = $stmt->get_result();
 $order = $orderResult->fetch_assoc();
+$stmt->close();
 ?>
 <!DOCTYPE html>
 <html>
@@ -69,10 +62,10 @@ $order = $orderResult->fetch_assoc();
         <input type="number" id="quantity" name="quantity" required class="form-control w-25">
       </p>
       <p><strong>Destination:</strong> <?= htmlspecialchars($order['destination_order']) ?></p>
-      <p><strong>Arrive Time:</strong> Within 1-3 Days</p>
+      <p><strong>Arrive Time:</strong> Within 1–3 Days</p>
 
       <a href="supplier_list.php" class="btn-back">BACK</a>
-      <button type="submit" class="btn-submit">ADD ORDER</button>
+      <button type="submit" class="btn-submit" name="submit">ADD ORDER</button>
     </form>
   <?php else: ?>
     <p>No pending order found for this supplier.</p>

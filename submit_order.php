@@ -17,13 +17,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $stmt1->execute();
   $receipt_id = $stmt1->insert_id;
 
-  // Insert into history_table
-  $status = "Delivered"; // or In-Progress
-  $company_name = "COMPANY 1"; // Optional: adjust if dynamic later
-  $stmt2 = $conn->prepare("INSERT INTO history_table (itemname_history, companyname_history, arrive_history, status_history, quantity_history) VALUES (?, ?, ?, ?, ?)");
-  $stmt2->bind_param("ssssi", $item, $company_name, $arrive_date, $status, $quantity);
-  $stmt2->execute();
-
   // Delete from pending order
   $delete = $conn->prepare("DELETE FROM order_table WHERE itemname_order = ? AND destination_order = ? AND date_of_order = ? LIMIT 1");
   $delete->bind_param("sss", $item, $destination, $date_of_order);

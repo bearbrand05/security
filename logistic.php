@@ -87,3 +87,28 @@ $result = $conn->query($sql);
 <?php
 $conn->close();
 ?>
+
+
+-- Drop existing table if it exists
+DROP TABLE IF EXISTS logistics_table;
+
+-- Create table with auto-increment
+CREATE TABLE logistics_table (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    item VARCHAR(255) NOT NULL,
+    destination VARCHAR(100) NOT NULL,
+    pickup_date DATE,
+    delivery_date DATE,
+    status VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insert sample data with explicit IDs (1-4)
+INSERT INTO logistics_table (id, item, destination, delivery_date, pickup_date, status) VALUES
+(1, 'T-Shirt - Black', 'Cebu City', '2025-08-01', '2025-07-30', 'Delivered'),
+(2, 'Hoodie - Blue', 'Davao City', '2025-08-03', '2025-08-01', 'In Transit'),
+(3, 'Jogger Pants', 'Baguio City', '2025-08-05', '2025-08-02', 'Pending'),
+(4, 'Cap - Red', 'Makati City', '2025-08-04', '2025-08-02', 'Shipped');
+
+-- Reset auto-increment to start after 4
+ALTER TABLE logistics_table AUTO_INCREMENT = 5;

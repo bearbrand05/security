@@ -2,54 +2,40 @@
 include 'db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $item = $_POST['item'];
-  $quantity = intval($_POST['quantity']);
-  $destination = $_POST['destination'];
-  $date_of_order = $_POST['date_of_order'];
+  // Collect form data
+  $item = $_POST['item'] ?? '';
+  $destination = $_POST['destination'] ?? '';
+  $date_of_order = $_POST['date_of_order'] ?? '';
+  $quantity = $_POST['quantity'] ?? '';
+  $selected_item = $_POST['selected_item'] ?? '';
+  $order_id = intval($_POST['order_id'] ?? 0);
 
-  // Get current pending quantity
-  $check = $conn->prepare("SELECT id_order, quantity_order FROM order_table WHERE itemname_order = ? AND destination_order = ? AND date_of_order = ? LIMIT 1");
-  $check->bind_param("sss", $item, $destination, $date_of_order);
-  $check->execute();
-  $result = $check->get_result();
-
-  if ($result->num_rows > 0) {
-    $order = $result->fetch_assoc();
-    $order_id = $order['id_order'];
-    $current_quantity = $order['quantity_order'];
-
-    if ($quantity >= $current_quantity) {
-      // Quantity fulfilled or exceeded — delete the order
-      $delete = $conn->prepare("DELETE FROM order_table WHERE id_order = ?");
-      $delete->bind_param("i", $order_id);
-      $delete->execute();
-      $delete->close();
-    } else {
-      // Partial fulfillment — update the quantity
-      $new_quantity = $current_quantity - $quantity;
-      $update = $conn->prepare("UPDATE order_table SET quantity_order = ? WHERE id_order = ?");
-      $update->bind_param("ii", $new_quantity, $order_id);
-      $update->execute();
-      $update->close();
-    }
-
-    // Record in order_receipt
-    $arrive_date = date('Y-m-d', strtotime($date_of_order . ' +3 days'));
-    $insert = $conn->prepare("INSERT INTO order_receipt (item_receipt, quantity_reciept, arrive_receipt, destination_receipt) VALUES (?, ?, ?, ?)");
-    $insert->bind_param("siss", $item, $quantity, $arrive_date, $destination);
-    $insert->execute();
-    $receipt_id = $insert->insert_id;
-    $insert->close();
-
-    // ✅ Redirect to receipt
-    header("Location: receipt.php?id=$receipt_id");
-    exit();
-
-  } else {
-    echo "Order not found.";
+  if (empty($selected_item)) {
+    die("Error: Please select an item.");
   }
 
-  $check->close();
+  // Calculate arrive date = +3 days
+  $arrive_date = date('Y-m-d', strtotime($date_of_order . ' +3 days'));
+
+  // 1. Insert into order_receipt
+  $insert = $conn->prepare("INSERT INTO order_receipt (item_receipt, quantity_reciept, arrive_receipt, destination_receipt) VALUES (?, ?, ?, ?)");
+  $insert->bind_param("siss", $selected_item, $quantity, $arrive_date, $destination);
+  $insert->execute();
+  $receipt_id = $conn->insert_id;
+  $insert->close();
+
+  // 2. Delete from order_table based on the original pending order ID
+  if ($order_id > 0) {
+    $delete = $conn->prepare("DELETE FROM order_table WHERE id_order = ?");
+    $delete->bind_param("i", $order_id);
+    $delete->execute();
+    $delete->close();
+  }
+
+  // 3. Redirect to receipt
+  header("Location: receipt.php?id=" . $receipt_id);
+  exit();
 } else {
   echo "Invalid request.";
 }
+?>

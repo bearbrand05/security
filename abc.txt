@@ -89,11 +89,11 @@ $categoryItems = [
     $category = $supplier['category'];
     $items = $categoryItems[$category] ?? [];
 
-    // Set default values
-    $itemname_order = $matchingOrder['itemname_order'] ?? $supplier['supply'];
-    $destination_order = $matchingOrder['destination_order'] ?? "Default Warehouse";
-    $date_of_order = $matchingOrder['date_of_order'] ?? date('Y-m-d');
-    $quantity_order = $matchingOrder['quantity_order'] ?? 100;
+    // Set values for form
+    $itemname_order = $matchingOrder['itemname_order'] ?? '';
+    $destination_order = $matchingOrder['destination_order'] ?? '';
+    $date_of_order = $matchingOrder['date_of_order'] ?? '';
+    $quantity_order = $matchingOrder['quantity_order'] ?? '';
     $order_id = $matchingOrder['id_order'] ?? 0;
     ?>
     <div class="modal fade" id="supplierModal<?= $supplier['id_supplier'] ?>" tabindex="-1">
@@ -113,10 +113,10 @@ $categoryItems = [
             <input type="hidden" name="date_of_order" value="<?= $date_of_order ?>">
             <input type="hidden" name="quantity" value="<?= $quantity_order ?>">
             <input type="hidden" name="supplier_name" value="<?= htmlspecialchars($supplier['name_supplier']) ?>">
-            <input type="hidden" name="order_id" value="<?= $order_id ?>">
+            <input type="hidden" name="id_order" value="<?= $order_id ?>">
 
-            <p><strong>Quantity:</strong> <?= $quantity_order ?></p>
-            <p><strong>Destination:</strong> <?= htmlspecialchars($destination_order) ?></p>
+            <p><strong>Quantity:</strong> <?= $quantity_order ?: 'No order found' ?></p>
+            <p><strong>Destination:</strong> <?= htmlspecialchars($destination_order) ?: 'N/A' ?></p>
 
             <label><strong>ITEM:</strong></label>
             <select name="selected_item" class="form-select" required>
@@ -127,7 +127,7 @@ $categoryItems = [
             </select>
 
             <div class="text-end mt-3">
-              <button type="submit" class="btn btn-primary">Submit Order</button>
+              <button type="submit" class="btn btn-primary" <?= $order_id == 0 ? 'disabled' : '' ?>>Submit Order</button>
             </div>
           </form>
         </div>

@@ -89,3 +89,10 @@ INSERT INTO order_table (customer_name, destination_order, itemname_order, quant
 ('Inventory', 'Warehouse 2', 'Mop', 200, '2025-08-03'),
 ('Inventory', 'Warehouse 3', 'Tape', 50, '2025-08-04'),
 ('Inventory', 'Warehouse 4', 'Stapler', 80, '2025-08-05'); 
+
+SELECT id_supplier, name_supplier, supply FROM supplier_table;
+UPDATE `inventory_db`.`supplier_table` SET `supply` = 'Desktop, Laptop, Monitor, Phone' WHERE (`id_supplier` = '1000');
+UPDATE `inventory_db`.`supplier_table` SET `supply` = 'Keyboard, Mouse, Headset' WHERE (`id_supplier` = '1001');
+UPDATE `inventory_db`.`supplier_table` SET `supply` = 'Chair, Desk, Cabinet' WHERE (`id_supplier` = '1002');
+UPDATE `inventory_db`.`supplier_table` SET `supply` = 'Pen, Notebook, Stapler' WHERE (`id_supplier` = '1003');
+UPDATE `inventory_db`.`supplier_table` SET `supply` = 'Mop, Detergent, Brush' WHERE (`id_supplier` = '1004');

@@ -1,8 +1,8 @@
 <?php
 $host = "localhost";
 $user = "root";
-$pass = ""; // usually empty for XAMPP
-$dbname = "meow"; // your database name
+$pass = "";
+$dbname = "meow";
 
 $conn = new mysqli($host, $user, $pass, $dbname);
 

@@ -7,6 +7,8 @@ $conn = new mysqli($host, $user, $pass, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
+
+// Query data from the existing table
 $sql = "SELECT * FROM logistics_table";
 $result = $conn->query($sql);
 ?>
@@ -76,6 +78,46 @@ $result = $conn->query($sql);
             padding: 30px;
         }
         
+        .actions-bar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .btn i {
+            font-size: 16px;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #e05555;
+        }
+        
+        .btn-sm {
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+        
         .table-container {
             overflow-x: auto;
             border-radius: 8px;
@@ -143,6 +185,11 @@ $result = $conn->query($sql);
             color: var(--danger);
         }
         
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
         .empty-state {
             text-align: center;
             padding: 40px;
@@ -156,11 +203,25 @@ $result = $conn->query($sql);
         }
         
         footer {
-            background: var(--light);
+            background-color: var(--light);
             padding: 20px;
             text-align: center;
             color: var(--secondary);
             font-size: 14px;
+        }
+        
+        .filter-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .filter-container select,
+        .filter-container input {
+            padding: 8px 12px;
+            border: 1px solid var(--accent);
+            border-radius: 4px;
+            background-color: white;
         }
         
         @media (max-width: 768px) {
@@ -170,6 +231,10 @@ $result = $conn->query($sql);
                 gap: 15px;
             }
             
+            .actions-bar {
+                justify-content: center;
+            }
+            
             .content {
                 padding: 20px;
             }
@@ -177,18 +242,35 @@ $result = $conn->query($sql);
             th, td {
                 padding: 12px 15px;
             }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-shipping-fast"></i> Logistics</h1>
+            <h1><i class="fas fa-shipping-fast"></i> Logistics Dashboard</h1>
         </header>
         
         <div class="content">
+            <div class="actions-bar">
+                <div class="filter-container">
+                    <select id="statusFilter" onchange="filterTable()">
+                        <option value="">All Statuses</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="In Transit">In Transit</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Shipped">Shipped</option>
+                    </select>
+                    <input type="text" id="searchInput" placeholder="Search..." onkeyup="filterTable()">
+                </div>
+            </div>
+            
             <div class="table-container">
-                <table>
+                <table id="logisticsTable">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -197,10 +279,11 @@ $result = $conn->query($sql);
                             <th>Delivery Date</th>
                             <th>Pickup Date</th>
                             <th>Status</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if ($result->num_rows > 0): ?>
+                        <?php if ($result && $result->num_rows > 0): ?>
                             <?php while($row = $result->fetch_assoc()): ?>
                                 <tr>
                                     <td><?= $row['id'] ?></td>
@@ -215,11 +298,18 @@ $result = $conn->query($sql);
                                         echo "<span class='status {$statusClass}'>{$status}</span>";
                                         ?>
                                     </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <a href="delete_shipment.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this shipment?')">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
                                 </tr>
                             <?php endwhile; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="6" class="empty-state">
+                                <td colspan="7" class="empty-state">
                                     <i class="fas fa-box-open"></i>
                                     <div>No logistics data found.</div>
                                 </td>
@@ -230,10 +320,36 @@ $result = $conn->query($sql);
             </div>
         </div>
         
-        <footer>
-            Logistics Management System &copy; <?= date('Y') ?>
-        </footer>
     </div>
+
+    <script>
+        function filterTable() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const table = document.getElementById('logisticsTable');
+            const tr = table.getElementsByTagName('tr');
+            
+            for (let i = 1; i < tr.length; i++) {
+                const statusCell = tr[i].getElementsByTagName('td')[5];
+                const statusText = statusCell.textContent || statusCell.innerText;
+                
+                let showRow = true;
+                
+                if (statusFilter && statusText.indexOf(statusFilter) === -1) {
+                    showRow = false;
+                }
+                
+                if (searchInput) {
+                    const rowText = tr[i].textContent.toLowerCase();
+                    if (rowText.indexOf(searchInput) === -1) {
+                        showRow = false;
+                    }
+                }
+                
+                tr[i].style.display = showRow ? '' : 'none';
+            }
+        }
+    </script>
 </body>
 </html>
 <?php
@@ -244,11 +360,9 @@ $conn->close();
 
 
 
-
--- Drop existing table if it exists
 DROP TABLE IF EXISTS logistics_table;
 
--- Create table with auto-increment
+-- auto-increment
 CREATE TABLE logistics_table (
     id INT PRIMARY KEY AUTO_INCREMENT,
     item VARCHAR(255) NOT NULL,
@@ -259,7 +373,6 @@ CREATE TABLE logistics_table (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Insert sample data with explicit IDs (1-4)
 INSERT INTO logistics_table (id, item, destination, delivery_date, pickup_date, status) VALUES
 (1, 'T-Shirt - Black', 'Cebu City', '2025-08-01', '2025-07-30', 'Delivered'),
 (2, 'Hoodie - Blue', 'Davao City', '2025-08-03', '2025-08-01', 'In Transit'),

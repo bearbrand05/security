@@ -8,17 +8,19 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Handle delete request
+// Add deleted_at column if it doesn't exist
+$conn->query("ALTER TABLE logistics_table ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP NULL DEFAULT NULL");
+
+// Handle delete request (soft delete)
 if (isset($_GET['delete_id'])) {
     $id = $_GET['delete_id'];
     
-    // Prepare and execute delete statement
-    $stmt = $conn->prepare("DELETE FROM logistics_table WHERE id = ?");
+    // Mark as deleted instead of permanently removing
+    $stmt = $conn->prepare("UPDATE logistics_table SET deleted_at = NOW() WHERE id = ?");
     $stmt->bind_param("i", $id);
     
     if ($stmt->execute()) {
-        // Redirect to prevent refresh issues
-        header("Location: " . basename(__FILE__));
+        header("Location: " . basename(__FILE__) . "?deleted=1");
         exit();
     } else {
         echo "Error deleting record: " . $conn->error;
@@ -27,9 +29,31 @@ if (isset($_GET['delete_id'])) {
     $stmt->close();
 }
 
-// Query data from the existing table
-$sql = "SELECT * FROM logistics_table";
+// Handle restore request
+if (isset($_GET['restore_id'])) {
+    $id = $_GET['restore_id'];
+    
+    // Restore by clearing deleted_at
+    $stmt = $conn->prepare("UPDATE logistics_table SET deleted_at = NULL WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    
+    if ($stmt->execute()) {
+        header("Location: " . basename(__FILE__) . "?restored=1");
+        exit();
+    } else {
+        echo "Error restoring record: " . $conn->error;
+    }
+    
+    $stmt->close();
+}
+
+// Query data from the existing table (only non-deleted items)
+$sql = "SELECT * FROM logistics_table WHERE deleted_at IS NULL";
 $result = $conn->query($sql);
+
+// Query deleted items
+$deleted_sql = "SELECT * FROM logistics_table WHERE deleted_at IS NOT NULL ORDER BY deleted_at DESC LIMIT 5";
+$deleted_result = $conn->query($deleted_sql);
 ?>
 <!DOCTYPE html>
 <html>
@@ -99,7 +123,7 @@ $result = $conn->query($sql);
         
         .actions-bar {
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
             margin-bottom: 20px;
             flex-wrap: wrap;
             gap: 10px;
@@ -132,6 +156,24 @@ $result = $conn->query($sql);
             background-color: #e05555;
         }
         
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #5a8a4a;
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
         .btn-sm {
             padding: 6px 10px;
             font-size: 12px;
@@ -141,6 +183,7 @@ $result = $conn->query($sql);
             overflow-x: auto;
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
         }
         
         table {
@@ -259,6 +302,43 @@ $result = $conn->query($sql);
             font-size: 20px;
         }
         
+        .deleted-items {
+            background-color: rgba(245, 108, 108, 0.05);
+            border: 1px solid rgba(245, 108, 108, 0.2);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        .deleted-items h3 {
+            color: var(--danger);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .deleted-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background-color: white;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--danger);
+        }
+        
+        .deleted-item-info {
+            flex: 1;
+        }
+        
+        .deleted-item-meta {
+            font-size: 12px;
+            color: var(--secondary);
+            margin-top: 5px;
+        }
+        
         @media (max-width: 768px) {
             header {
                 flex-direction: column;
@@ -267,7 +347,7 @@ $result = $conn->query($sql);
             }
             
             .actions-bar {
-                justify-content: center;
+                flex-direction: column;
             }
             
             .content {
@@ -280,6 +360,12 @@ $result = $conn->query($sql);
             
             .action-buttons {
                 flex-direction: column;
+            }
+            
+            .deleted-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
             }
         }
     </style>
@@ -294,7 +380,14 @@ $result = $conn->query($sql);
             <?php if (isset($_GET['deleted']) && $_GET['deleted'] == 1): ?>
                 <div class="success-message">
                     <i class="fas fa-check-circle"></i>
-                    <span>Shipment deleted successfully!</span>
+                    <span>Shipment moved to deleted items! You can restore it from the bottom of the page.</span>
+                </div>
+            <?php endif; ?>
+            
+            <?php if (isset($_GET['restored']) && $_GET['restored'] == 1): ?>
+                <div class="success-message">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Shipment restored successfully!</span>
                 </div>
             <?php endif; ?>
             
@@ -360,6 +453,28 @@ $result = $conn->query($sql);
                     </tbody>
                 </table>
             </div>
+            
+            <?php if ($deleted_result && $deleted_result->num_rows > 0): ?>
+                <div class="deleted-items">
+                    <h3><i class="fas fa-trash-alt"></i> Recently Deleted Items</h3>
+                    
+                    <?php while($deleted_row = $deleted_result->fetch_assoc()): ?>
+                        <div class="deleted-item">
+                            <div class="deleted-item-info">
+                                <strong><?= $deleted_row['item'] ?></strong>
+                                <div class="deleted-item-meta">
+                                    ID: <?= $deleted_row['id'] ?> | 
+                                    Destination: <?= $deleted_row['destination'] ?> | 
+                                    Deleted: <?= date('M d, Y H:i', strtotime($deleted_row['deleted_at'])) ?>
+                                </div>
+                            </div>
+                            <a href="?restore_id=<?= $deleted_row['id'] ?>" class="btn btn-sm btn-success">
+                                <i class="fas fa-undo"></i> Restore
+                            </a>
+                        </div>
+                    <?php endwhile; ?>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -415,9 +530,9 @@ CREATE TABLE logistics_table (
 );
 
 INSERT INTO logistics_table (id, item, destination, delivery_date, pickup_date, status) VALUES
-(1, 'T-Shirt - Black', 'Cebu City', '2025-08-01', '2025-07-30', 'Delivered'),
+(1, 'Brief - Black', 'Cebu City', '2025-08-01', '2025-07-30', 'Delivered'),
 (2, 'Hoodie - Blue', 'Davao City', '2025-08-03', '2025-08-01', 'In Transit'),
-(3, 'Jogger Pants', 'Baguio City', '2025-08-05', '2025-08-02', 'Pending'),
+(3, 'Cargo Pants', 'Baguio City', '2025-08-05', '2025-08-02', 'Pending'),
 (4, 'Cap - Red', 'Makati City', '2025-08-04', '2025-08-02', 'Shipped');
 
 -- Reset auto-increment to start after 4

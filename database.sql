@@ -74,4 +74,25 @@ INSERT INTO order_table (customer_name, destination_order, itemname_order, quant
 ('Pedro Reyes', 'TANAUAN', 'Supply Name 3', 200, '2025-08-02'),
 ('Ana Lopez', 'BATANGAS CITY', 'Supply Name 4', 400, '2025-08-02'),
 ('Carlos Garcia', 'MALVAR', 'Supply Name 5', 150, '2025-08-03');
+
+ALTER TABLE supplier_table ADD category VARCHAR(45) DEFAULT NULL;
   
+UPDATE supplier_table SET category = 'Electronics' WHERE id_supplier = 1000;
+UPDATE supplier_table SET category = 'Peripherals' WHERE id_supplier = 1001;
+UPDATE supplier_table SET category = 'Furniture' WHERE id_supplier = 1002;
+UPDATE supplier_table SET category = 'Stationery' WHERE id_supplier = 1003;
+UPDATE supplier_table SET category = 'Cleaning Supplies' WHERE id_supplier = 1004;
+
+INSERT INTO order_table (customer_name, destination_order, itemname_order, quantity_order, date_of_order) VALUES
+('Liza Gomez', 'Bacolod', 'Stapler', 80, '2025-08-05'),
+('Inventory', 'Warehouse 1', 'Keyboard', 150, '2025-08-02'),
+('Inventory', 'Warehouse 2', 'Mop', 200, '2025-08-03'),
+('Inventory', 'Warehouse 3', 'Tape', 50, '2025-08-04'),
+('Inventory', 'Warehouse 4', 'Stapler', 80, '2025-08-05'); 
+
+SELECT id_supplier, name_supplier, supply FROM supplier_table;
+UPDATE `inventory_db`.`supplier_table` SET `supply` = 'Desktop, Laptop, Monitor, Phone' WHERE (`id_supplier` = '1000');
+UPDATE `inventory_db`.`supplier_table` SET `supply` = 'Keyboard, Mouse, Headset' WHERE (`id_supplier` = '1001');
+UPDATE `inventory_db`.`supplier_table` SET `supply` = 'Chair, Desk, Cabinet' WHERE (`id_supplier` = '1002');
+UPDATE `inventory_db`.`supplier_table` SET `supply` = 'Pen, Notebook, Stapler' WHERE (`id_supplier` = '1003');
+UPDATE `inventory_db`.`supplier_table` SET `supply` = 'Mop, Detergent, Brush' WHERE (`id_supplier` = '1004');

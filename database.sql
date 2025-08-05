@@ -55,11 +55,12 @@ CREATE TABLE `history_table` (
   PRIMARY KEY (`id_history`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-UPDATE supplier_table SET contact_name = 'John', supply = 'Supply Name 1', review = 'Good' WHERE id_supplier = 1000;
-UPDATE supplier_table SET contact_name = 'David', supply = 'Supply Name 2', review = 'You did well' WHERE id_supplier = 1001;
-UPDATE supplier_table SET contact_name = 'Mary', supply = 'Supply Name 3', review = 'Okay' WHERE id_supplier = 1002;
-UPDATE supplier_table SET contact_name = 'Dwight', supply = 'Supply Name 4', review = 'Just fine' WHERE id_supplier = 1003;
-UPDATE supplier_table SET contact_name = 'Rheal', supply = 'Supply Name 5', review = 'Do better' WHERE id_supplier = 1004;
+INSERT INTO supplier_table (id_supplier, name_supplier, ratings, contact_name, supply, review) VALUES
+(1000, 'Supplier 1', 4.5, 'John', 'Supply Name 1', 'Good'),
+(1001, 'Supplier 2', 3.8, 'David', 'Supply Name 2', 'You did well'),
+(1002, 'Supplier 3', 5.0, 'Mary', 'Supply Name 3', 'Okay'),
+(1003, 'Supplier 4', 3.9, 'Dwight', 'Supply Name 4', 'Just fine'),
+(1004, 'Supplier 5', 4.2, 'Rheal', 'Supply Name 5', 'Do better');
 
 ALTER TABLE supplier_table
 ADD COLUMN contact_name VARCHAR(45) NULL,

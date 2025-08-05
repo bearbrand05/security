@@ -61,5 +61,9 @@ UPDATE supplier_table SET contact_name = 'Mary', supply = 'Supply Name 3', revie
 UPDATE supplier_table SET contact_name = 'Dwight', supply = 'Supply Name 4', review = 'Just fine' WHERE id_supplier = 1003;
 UPDATE supplier_table SET contact_name = 'Rheal', supply = 'Supply Name 5', review = 'Do better' WHERE id_supplier = 1004;
 
+ALTER TABLE supplier_table
+ADD COLUMN contact_name VARCHAR(45) NULL,
+ADD COLUMN supply VARCHAR(100) NULL,
+ADD COLUMN review VARCHAR(255) NULL;
 
   

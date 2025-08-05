@@ -66,4 +66,11 @@ ADD COLUMN contact_name VARCHAR(45) NULL,
 ADD COLUMN supply VARCHAR(100) NULL,
 ADD COLUMN review VARCHAR(255) NULL;
 
+
+INSERT INTO order_table (customer_name, destination_order, itemname_order, quantity_order, date_of_order) VALUES
+('Juan Dela Cruz', 'BANGKOD', 'Supply Name 1', 300, '2025-08-01'),
+('Maria Santos', 'LIPA CITY', 'Supply Name 2', 500, '2025-08-01'),
+('Pedro Reyes', 'TANAUAN', 'Supply Name 3', 200, '2025-08-02'),
+('Ana Lopez', 'BATANGAS CITY', 'Supply Name 4', 400, '2025-08-02'),
+('Carlos Garcia', 'MALVAR', 'Supply Name 5', 150, '2025-08-03');
   

@@ -1,10 +1,11 @@
 <?php
 include 'db.php';
 
+// Fetch suppliers
 $sql = "SELECT * FROM supplier_table ORDER BY id_supplier ASC";
 $result = $conn->query($sql);
 
-// Get all pending orders
+// Fetch pending orders
 $orderQuery = "SELECT * FROM order_table ORDER BY date_of_order DESC";
 $orderResult = $conn->query($orderQuery);
 $orders = [];
@@ -12,7 +13,7 @@ while ($orderRow = $orderResult->fetch_assoc()) {
   $orders[] = $orderRow;
 }
 
-// Items per category
+// Define category items
 $categoryItems = [
   'Electronics' => ['Desktop', 'Laptop', 'Monitor', 'Phone'],
   'Peripherals' => ['Keyboard', 'Mouse', 'Headset'],
@@ -31,13 +32,6 @@ $categoryItems = [
   <style>
     body { font-family: 'Segoe UI', sans-serif; }
     h2 { font-weight: bold; margin-bottom: 20px; }
-    .container-box {
-      border: 2px solid black;
-      padding: 20px;
-      border-radius: 10px;
-    }
-    .table th { text-transform: uppercase; font-size: 14px; }
-    .table td { font-size: 14px; vertical-align: middle; }
     .btn-back {
       background-color: #888; color: white; border: none;
       padding: 6px 20px; border-radius: 5px; text-decoration: none;
@@ -51,6 +45,7 @@ $categoryItems = [
 </head>
 <body class="p-4">
   <h2>Suppliers</h2>
+
   <table class="table table-hover">
     <thead class="table-light">
       <tr>
@@ -62,39 +57,59 @@ $categoryItems = [
     </thead>
     <tbody>
       <?php foreach ($result as $supplier): ?>
+        <?php
+        // Find matching pending order using ANY item in supply
+        $matchingOrder = null;
+        $suppliedItems = array_map('trim', explode(',', $supplier['supply']));
+        foreach ($orders as $order) {
+          if (in_array($order['itemname_order'], $suppliedItems)) {
+            $matchingOrder = $order;
+            break;
+          }
+        }
+        ?>
         <tr>
           <td>#<?= $supplier['id_supplier'] ?></td>
           <td><?= htmlspecialchars($supplier['name_supplier']) ?></td>
           <td><?= is_null($supplier['ratings']) ? 'N/A' : number_format($supplier['ratings'], 1) . ' / 5.0' ?></td>
-          <td><button class="view-link" data-bs-toggle="modal" data-bs-target="#supplierModal<?= $supplier['id_supplier'] ?>">view details</button></td>
+          <td>
+            <?php if ($matchingOrder): ?>
+              <button class="view-link" data-bs-toggle="modal" data-bs-target="#supplierModal<?= $supplier['id_supplier'] ?>">view details</button>
+            <?php else: ?>
+              <span class="text-muted">No order</span>
+            <?php endif; ?>
+          </td>
         </tr>
       <?php endforeach; ?>
     </tbody>
   </table>
+
   <div class="text-end">
-    <a href="supply.php" class="btn-back">back</a>
+    <a href="supply.php" class="btn-back">Back</a>
   </div>
 
+  <!-- Modals for each supplier -->
   <?php foreach ($result as $supplier): ?>
     <?php
-    // Find matching order for this supplier's supply
     $matchingOrder = null;
+    $suppliedItems = array_map('trim', explode(',', $supplier['supply']));
     foreach ($orders as $order) {
-      if ($order['itemname_order'] === $supplier['supply']) {
+      if (in_array($order['itemname_order'], $suppliedItems)) {
         $matchingOrder = $order;
         break;
       }
     }
 
+    if (!$matchingOrder) continue;
+
     $category = $supplier['category'];
     $items = $categoryItems[$category] ?? [];
 
-    // Set default values
-    $itemname_order = $matchingOrder['itemname_order'] ?? $supplier['supply'];
-    $destination_order = $matchingOrder['destination_order'] ?? "Default Warehouse";
-    $date_of_order = $matchingOrder['date_of_order'] ?? date('Y-m-d');
-    $quantity_order = $matchingOrder['quantity_order'] ?? 100;
-    $order_id = $matchingOrder['id_order'] ?? 0;
+    $itemname_order = $matchingOrder['itemname_order'];
+    $destination_order = $matchingOrder['destination_order'];
+    $date_of_order = $matchingOrder['date_of_order'];
+    $quantity_order = $matchingOrder['quantity_order'];
+    $order_id = $matchingOrder['id_order'];
     ?>
     <div class="modal fade" id="supplierModal<?= $supplier['id_supplier'] ?>" tabindex="-1">
       <div class="modal-dialog">
@@ -106,14 +121,13 @@ $categoryItems = [
           <p><strong>Review:</strong> <?= htmlspecialchars($supplier['review']) ?></p>
           <p><strong>Category:</strong> <?= htmlspecialchars($category) ?></p>
 
-          <!-- Order Form -->
           <form action="submit_order.php" method="POST">
             <input type="hidden" name="item" value="<?= htmlspecialchars($itemname_order) ?>">
             <input type="hidden" name="destination" value="<?= htmlspecialchars($destination_order) ?>">
             <input type="hidden" name="date_of_order" value="<?= $date_of_order ?>">
             <input type="hidden" name="quantity" value="<?= $quantity_order ?>">
             <input type="hidden" name="supplier_name" value="<?= htmlspecialchars($supplier['name_supplier']) ?>">
-            <input type="hidden" name="order_id" value="<?= $order_id ?>">
+            <input type="hidden" name="id_order" value="<?= $order_id ?>">
 
             <p><strong>Quantity:</strong> <?= $quantity_order ?></p>
             <p><strong>Destination:</strong> <?= htmlspecialchars($destination_order) ?></p>

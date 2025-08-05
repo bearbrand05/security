@@ -87,7 +87,7 @@ INSERT INTO order_table (customer_name, destination_order, itemname_order, quant
 ('Liza Gomez', 'Bacolod', 'Stapler', 80, '2025-08-05'),
 ('Inventory', 'Warehouse 1', 'Keyboard', 150, '2025-08-02'),
 ('Inventory', 'Warehouse 2', 'Mop', 200, '2025-08-03'),
-('Inventory', 'Warehouse 3', 'Tape', 50, '2025-08-04'),
+('Inventory', 'Warehouse 3', 'Pen', 50, '2025-08-04'),
 ('Inventory', 'Warehouse 4', 'Stapler', 80, '2025-08-05'); 
 
 SELECT id_supplier, name_supplier, supply FROM supplier_table;

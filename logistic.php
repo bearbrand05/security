@@ -8,6 +8,25 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// Handle delete request
+if (isset($_GET['delete_id'])) {
+    $id = $_GET['delete_id'];
+    
+    // Prepare and execute delete statement
+    $stmt = $conn->prepare("DELETE FROM logistics_table WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    
+    if ($stmt->execute()) {
+        // Redirect to prevent refresh issues
+        header("Location: " . basename(__FILE__));
+        exit();
+    } else {
+        echo "Error deleting record: " . $conn->error;
+    }
+    
+    $stmt->close();
+}
+
 // Query data from the existing table
 $sql = "SELECT * FROM logistics_table";
 $result = $conn->query($sql);
@@ -224,6 +243,22 @@ $result = $conn->query($sql);
             background-color: white;
         }
         
+        .success-message {
+            background-color: rgba(108, 156, 92, 0.15);
+            color: var(--success);
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--success);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .success-message i {
+            font-size: 20px;
+        }
+        
         @media (max-width: 768px) {
             header {
                 flex-direction: column;
@@ -256,6 +291,13 @@ $result = $conn->query($sql);
         </header>
         
         <div class="content">
+            <?php if (isset($_GET['deleted']) && $_GET['deleted'] == 1): ?>
+                <div class="success-message">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Shipment deleted successfully!</span>
+                </div>
+            <?php endif; ?>
+            
             <div class="actions-bar">
                 <div class="filter-container">
                     <select id="statusFilter" onchange="filterTable()">
@@ -300,7 +342,7 @@ $result = $conn->query($sql);
                                     </td>
                                     <td>
                                         <div class="action-buttons">
-                                            <a href="delete_shipment.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this shipment?')">
+                                            <a href="?delete_id=<?= $row['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this shipment?')">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         </div>
@@ -319,7 +361,6 @@ $result = $conn->query($sql);
                 </table>
             </div>
         </div>
-        
     </div>
 
     <script>

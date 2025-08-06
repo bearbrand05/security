@@ -2,12 +2,10 @@
 // --- MySQL Connection ---
 $host = "localhost";
 $username = "root";
-$password = ""; // ← Replace with your actual password
-$database = "silus"; // ← Replace with your DB name
+$password = "";
+$database = "jalosi";
 
 $conn = new mysqli($host, $username, $password, $database);
-
-// Check connection
 if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
@@ -26,16 +24,17 @@ $result = $conn->query($sql);
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #f9e1e0;
+      background-color: #F2EFE5;
       margin: 0;
       padding: 40px;
-      color: #4a7ba6;
+      color: #4A4A4A;
     }
 
     h1 {
       text-align: center;
-      color: #bc85a3;
+      color: #B4B4B8;
       margin-bottom: 30px;
+      font-size: 30px;
     }
 
     table {
@@ -44,7 +43,7 @@ $result = $conn->query($sql);
       background-color: #fff;
       border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
     }
 
     th, td {
@@ -53,25 +52,25 @@ $result = $conn->query($sql);
     }
 
     th {
-      background-color: #feadb9;
-      color: white;
+      background-color: #C7C8CC;
+      color: #2E2E2E;
       font-weight: 600;
     }
 
     tr:nth-child(even) {
-      background-color: #fce9eb;
+      background-color: #F2EFE5;
     }
 
     tr:hover {
-      background-color: #f6d7dc;
+      background-color: #E3E1D9;
     }
 
     td {
-      color: #4a7ba6;
+      color: #4A4A4A;
     }
 
     .status {
-      padding: 6px 12px;
+      padding: 6px 14px;
       border-radius: 20px;
       font-size: 14px;
       font-weight: 500;
@@ -79,44 +78,58 @@ $result = $conn->query($sql);
     }
 
     .status.Delivered {
-      background-color: #bc85a3;
+      background-color: #B4B4B8;
       color: white;
     }
 
     .status.Pending {
-      background-color: #9799ba;
+      background-color: #C7C8CC;
       color: white;
     }
 
     .status.Cancelled {
-      background-color: #feadb9;
+      background-color: #E3E1D9;
+      color: #333;
+    }
+
+    .export-button {
+      padding: 6px 12px;
+      background-color: #C7C8CC;
       color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: background-color 0.2s ease;
+    }
+
+    .export-button:hover {
+      background-color: #B4B4B8;
     }
 
     .back-button {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: #feadb9;
-    color: #fff;
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-    padding: 8px 16px;
-    border-radius: 20px;
-    text-decoration: none;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    transition: background-color 0.2s ease;
-    z-index: 999;
-  }
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #C7C8CC;
+      color: white;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      padding: 8px 16px;
+      border-radius: 20px;
+      text-decoration: none;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+      transition: background-color 0.2s ease;
+      z-index: 999;
+    }
 
-  .back-button:hover {
-    background-color: #bc85a3;
-  }
+    .back-button:hover {
+      background-color: #B4B4B8;
+    }
   </style>
 </head>
 <body>
 
-<a href="history.php" class="back-button" title="Go Back">&#8592; Back</a>
+<a href="category_tracking.php" class="back-button">&#8592; Back</a>
 <h1>Arrival History</h1>
 
 <table>
@@ -128,6 +141,7 @@ $result = $conn->query($sql);
       <th>Arrival Date</th>
       <th>Status</th>
       <th>Quantity</th>
+      <th>Action</th>
     </tr>
   </thead>
   <tbody>
@@ -140,10 +154,13 @@ $result = $conn->query($sql);
           <td><?= $row['arrive_history'] ?></td>
           <td><span class="status <?= $row['status_history'] ?>"><?= $row['status_history'] ?></span></td>
           <td><?= $row['quantity_history'] ?></td>
+          <td>
+            <a class="export-button" href="print.php?id=<?= $row['id_history'] ?>" target="_blank">📄 Export</a>
+          </td>
         </tr>
       <?php endwhile; ?>
     <?php else: ?>
-      <tr><td colspan="6">No history data found.</td></tr>
+      <tr><td colspan="7">No history data found.</td></tr>
     <?php endif; ?>
   </tbody>
 </table>
@@ -151,6 +168,4 @@ $result = $conn->query($sql);
 </body>
 </html>
 
-<?php
-$conn->close();
-?>
+<?php $conn->close(); ?>

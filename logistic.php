@@ -7,16 +7,13 @@ $conn = new mysqli($host, $user, $pass, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-
 $conn->query("ALTER TABLE logistics_table ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP NULL DEFAULT NULL");
-
 
 if (!isset($_GET['delete_id']) && !isset($_GET['restore_id']) && 
     (isset($_GET['deleted']) || isset($_GET['restored']))) {
     header("Location: " . $_SERVER['PHP_SELF']);
     exit();
 }
-
 
 if (isset($_GET['delete_id'])) {
     $id = $_GET['delete_id'];
@@ -34,11 +31,9 @@ if (isset($_GET['delete_id'])) {
     
     $stmt->close();
 }
-
 if (isset($_GET['restore_id'])) {
     $id = $_GET['restore_id'];
     
-
     $stmt = $conn->prepare("UPDATE logistics_table SET deleted_at = NULL WHERE id = ?");
     $stmt->bind_param("i", $id);
     
@@ -51,10 +46,8 @@ if (isset($_GET['restore_id'])) {
     
     $stmt->close();
 }
-
 $sql = "SELECT * FROM logistics_table WHERE deleted_at IS NULL";
 $result = $conn->query($sql);
-
 $deleted_sql = "SELECT * FROM logistics_table WHERE deleted_at IS NOT NULL ORDER BY deleted_at DESC LIMIT 5";
 $deleted_result = $conn->query($deleted_sql);
 ?>
@@ -65,9 +58,10 @@ $deleted_result = $conn->query($deleted_sql);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #343a40;
-            --secondary: #6c757d;
-            --light: #f8f9fa;
+            --primary: #B4B4B8;
+            --secondary: #C7C8CC;
+            --light: #E3E1D9;
+            --background: #F2EFE5;
             --dark: #212529;
             --accent: #adb5bd;
             --success: #6c9c5c;
@@ -84,7 +78,7 @@ $deleted_result = $conn->query($deleted_sql);
         }
         
         body {
-            background-color: #f5f7fa;
+            background-color: var(--background);
             color: var(--dark);
             padding: 20px;
             line-height: 1.6;
@@ -93,7 +87,7 @@ $deleted_result = $conn->query($deleted_sql);
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: white;
+            background: var(--light);
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
             overflow: hidden;
@@ -101,7 +95,7 @@ $deleted_result = $conn->query($deleted_sql);
         
         header {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
+            color: var(--dark);
             padding: 25px 30px;
             display: flex;
             justify-content: space-between;
@@ -117,7 +111,7 @@ $deleted_result = $conn->query($deleted_sql);
         
         header h1 i {
             margin-right: 15px;
-            color: var(--light);
+            color: var(--dark);
         }
         
         .content {
@@ -170,11 +164,11 @@ $deleted_result = $conn->query($deleted_sql);
         
         .btn-secondary {
             background-color: var(--secondary);
-            color: white;
+            color: var(--dark);
         }
         
         .btn-secondary:hover {
-            background-color: #5a6268;
+            background-color: var(--primary);
         }
         
         .btn-sm {
@@ -187,6 +181,7 @@ $deleted_result = $conn->query($deleted_sql);
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             margin-bottom: 30px;
+            background: white;
         }
         
         table {
@@ -196,20 +191,20 @@ $deleted_result = $conn->query($deleted_sql);
         }
         
         th {
-            background-color: var(--light);
-            color: var(--primary);
+            background-color: var(--secondary);
+            color: var(--dark);
             font-weight: 600;
             text-align: left;
             padding: 18px 20px;
             position: sticky;
             top: 0;
             z-index: 10;
-            border-bottom: 2px solid var(--accent);
+            border-bottom: 2px solid var(--primary);
         }
         
         td {
             padding: 16px 20px;
-            border-bottom: 1px solid #e9ecef;
+            border-bottom: 1px solid var(--secondary);
         }
         
         tr:last-child td {
@@ -217,7 +212,7 @@ $deleted_result = $conn->query($deleted_sql);
         }
         
         tr:hover {
-            background-color: #f8f9fa;
+            background-color: var(--light);
         }
         
         .status {
@@ -259,14 +254,14 @@ $deleted_result = $conn->query($deleted_sql);
         .empty-state i {
             font-size: 48px;
             margin-bottom: 15px;
-            color: var(--accent);
+            color: var(--primary);
         }
         
         footer {
-            background-color: var(--light);
+            background-color: var(--secondary);
             padding: 20px;
             text-align: center;
-            color: var(--secondary);
+            color: var(--dark);
             font-size: 14px;
         }
         
@@ -279,7 +274,7 @@ $deleted_result = $conn->query($deleted_sql);
         .filter-container select,
         .filter-container input {
             padding: 8px 12px;
-            border: 1px solid var(--accent);
+            border: 1px solid var(--primary);
             border-radius: 4px;
             background-color: white;
         }
@@ -301,8 +296,8 @@ $deleted_result = $conn->query($deleted_sql);
         }
         
         .deleted-items {
-            background-color: rgba(245, 108, 108, 0.05);
-            border: 1px solid rgba(245, 108, 108, 0.2);
+            background-color: white;
+            border: 1px solid var(--secondary);
             border-radius: 8px;
             padding: 20px;
             margin-top: 30px;
@@ -321,7 +316,7 @@ $deleted_result = $conn->query($deleted_sql);
             justify-content: space-between;
             align-items: center;
             padding: 12px 15px;
-            background-color: white;
+            background-color: var(--light);
             border-radius: 6px;
             margin-bottom: 10px;
             border-left: 3px solid var(--danger);

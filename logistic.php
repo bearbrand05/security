@@ -8,19 +8,25 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Add deleted_at column if it doesn't exist
 $conn->query("ALTER TABLE logistics_table ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP NULL DEFAULT NULL");
 
-// Handle delete request (soft delete)
+
+if (!isset($_GET['delete_id']) && !isset($_GET['restore_id']) && 
+    (isset($_GET['deleted']) || isset($_GET['restored']))) {
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit();
+}
+
+
 if (isset($_GET['delete_id'])) {
     $id = $_GET['delete_id'];
     
-    // Mark as deleted instead of permanently removing
+    
     $stmt = $conn->prepare("UPDATE logistics_table SET deleted_at = NOW() WHERE id = ?");
     $stmt->bind_param("i", $id);
     
     if ($stmt->execute()) {
-        header("Location: " . basename(__FILE__) . "?deleted=1");
+        header("Location: " . $_SERVER['PHP_SELF'] . "?deleted=1");
         exit();
     } else {
         echo "Error deleting record: " . $conn->error;
@@ -29,16 +35,15 @@ if (isset($_GET['delete_id'])) {
     $stmt->close();
 }
 
-// Handle restore request
 if (isset($_GET['restore_id'])) {
     $id = $_GET['restore_id'];
     
-    // Restore by clearing deleted_at
+
     $stmt = $conn->prepare("UPDATE logistics_table SET deleted_at = NULL WHERE id = ?");
     $stmt->bind_param("i", $id);
     
     if ($stmt->execute()) {
-        header("Location: " . basename(__FILE__) . "?restored=1");
+        header("Location: " . $_SERVER['PHP_SELF'] . "?restored=1");
         exit();
     } else {
         echo "Error restoring record: " . $conn->error;
@@ -47,11 +52,9 @@ if (isset($_GET['restore_id'])) {
     $stmt->close();
 }
 
-// Query data from the existing table (only non-deleted items)
 $sql = "SELECT * FROM logistics_table WHERE deleted_at IS NULL";
 $result = $conn->query($sql);
 
-// Query deleted items
 $deleted_sql = "SELECT * FROM logistics_table WHERE deleted_at IS NOT NULL ORDER BY deleted_at DESC LIMIT 5";
 $deleted_result = $conn->query($deleted_sql);
 ?>
@@ -227,11 +230,6 @@ $deleted_result = $conn->query($deleted_sql);
             min-width: 100px;
         }
         
-        .status-delivered {
-            background-color: rgba(108, 156, 92, 0.15);
-            color: var(--success);
-        }
-        
         .status-in-transit {
             background-color: rgba(144, 147, 153, 0.15);
             color: var(--info);
@@ -395,10 +393,9 @@ $deleted_result = $conn->query($deleted_sql);
                 <div class="filter-container">
                     <select id="statusFilter" onchange="filterTable()">
                         <option value="">All Statuses</option>
-                        <option value="Delivered">Delivered</option>
+                        <option value="Shipped">Shipped</option>
                         <option value="In Transit">In Transit</option>
                         <option value="Pending">Pending</option>
-                        <option value="Shipped">Shipped</option>
                     </select>
                     <input type="text" id="searchInput" placeholder="Search..." onkeyup="filterTable()">
                 </div>
@@ -424,8 +421,8 @@ $deleted_result = $conn->query($deleted_sql);
                                     <td><?= $row['id'] ?></td>
                                     <td><?= $row['item'] ?></td>
                                     <td><?= $row['destination'] ?></td>
-                                    <td><?= date('M d, Y', strtotime($row['delivery_date'])) ?></td>
-                                    <td><?= date('M d, Y', strtotime($row['pickup_date'])) ?></td>
+                                    <td><?= !empty($row['delivery_date']) ? date('M d, Y', strtotime($row['delivery_date'])) : 'N/A' ?></td>
+                                    <td><?= !empty($row['pickup_date']) ? date('M d, Y', strtotime($row['pickup_date'])) : 'N/A' ?></td>
                                     <td>
                                         <?php 
                                         $status = $row['status'];
@@ -477,7 +474,6 @@ $deleted_result = $conn->query($deleted_sql);
             <?php endif; ?>
         </div>
     </div>
-
     <script>
         function filterTable() {
             const statusFilter = document.getElementById('statusFilter').value;

@@ -530,7 +530,7 @@ CREATE TABLE logistics_table (
 );
 
 INSERT INTO logistics_table (id, item, destination, delivery_date, pickup_date, status) VALUES
-(1, 'Brief - Black', 'Cebu City', '2025-08-01', '2025-07-30', 'Delivered'),
+(1, 'Brief - Black', 'Cebu City', '2025-08-01', '2025-07-30', 'Shipped'),
 (2, 'Hoodie - Blue', 'Davao City', '2025-08-03', '2025-08-01', 'In Transit'),
 (3, 'Cargo Pants', 'Baguio City', '2025-08-05', '2025-08-02', 'Pending'),
 (4, 'Cap - Red', 'Makati City', '2025-08-04', '2025-08-02', 'Shipped');

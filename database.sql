@@ -96,3 +96,17 @@ UPDATE `inventory_db`.`supplier_table` SET `supply` = 'Keyboard, Mouse, Headset'
 UPDATE `inventory_db`.`supplier_table` SET `supply` = 'Chair, Desk, Cabinet' WHERE (`id_supplier` = '1002');
 UPDATE `inventory_db`.`supplier_table` SET `supply` = 'Pen, Notebook, Stapler' WHERE (`id_supplier` = '1003');
 UPDATE `inventory_db`.`supplier_table` SET `supply` = 'Mop, Detergent, Brush' WHERE (`id_supplier` = '1004');
+
+
+
+
+
+
+
+
+
+
+B4B4B8
+C7C8CC
+E3E1D9
+F2EFE5

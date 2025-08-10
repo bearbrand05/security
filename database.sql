@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 USE inventory_db;
+=======
+
+>>>>>>> 303baf17d177401e3c3fcbc4d3a65964f486a7c3
 
 CREATE TABLE `logistics_table` (
   `id_logistic` INT NOT NULL AUTO_INCREMENT,
@@ -54,6 +58,7 @@ CREATE TABLE `history_table` (
   `quantity_history` INT NOT NULL,
   PRIMARY KEY (`id_history`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+<<<<<<< HEAD
 
 INSERT INTO supplier_table (id_supplier, name_supplier, ratings, contact_name, supply, review) VALUES
 (1000, 'Supplier 1', 4.5, 'John', 'Supply Name 1', 'Good'),
@@ -110,3 +115,6 @@ B4B4B8
 C7C8CC
 E3E1D9
 F2EFE5
+=======
+tangina
+>>>>>>> 303baf17d177401e3c3fcbc4d3a65964f486a7c3

@@ -92,4 +92,8 @@ $cat = $supplier['supply'];
     <button type="submit" class="btn-submit" name="submit">ADD ORDER</button>
   </form>
 </body>
+<<<<<<< HEAD
 </html>
+=======
+</html>
+>>>>>>> 303baf17d177401e3c3fcbc4d3a65964f486a7c3

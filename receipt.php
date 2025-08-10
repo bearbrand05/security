@@ -16,6 +16,7 @@ $data = $result->fetch_assoc();
 <head>
   <title>Receipt</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     body {
       background-color: #f4f4f4;
@@ -46,30 +47,82 @@ $data = $result->fetch_assoc();
       border: none;
       border-radius: 5px;
       text-decoration: none;
+      margin-right: 10px;
     }
     .btn-done:hover {
       background-color: #339af0;
+    }
+    .btn-print {
+      background-color: #6c757d;
+      color: white;
+      padding: 8px 20px;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+    }
+    .btn-print:hover {
+      background-color: #5a6268;
+    }
+    .print-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      .receipt-box, .receipt-box * {
+        visibility: visible;
+      }
+      .receipt-box {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        max-width: 100%;
+        box-shadow: none;
+        margin: 0;
+        padding: 20px;
+      }
+      .no-print {
+        display: none;
+      }
     }
   </style>
 </head>
 <body>
   <div class="receipt-box">
-    <h3>Receipt</h3>
+    <div class="print-header">
+      <h3>Receipt</h3>
+      <button class="btn-print no-print" onclick="window.print()">
+        <i class="fas fa-print"></i> Print
+      </button>
+    </div>
     <?php if ($data): ?>
       <p><strong>Ref #:</strong> #<?= $data['id_receipt'] ?></p>
       <p><strong>Item:</strong> <?= htmlspecialchars($data['item_receipt']) ?></p>
       <p><strong>Quantity:</strong> <?= $data['quantity_reciept'] ?></p>
       <p><strong>Arrive:</strong> <?= htmlspecialchars($data['arrive_receipt']) ?></p>
       <p><strong>Destination:</strong> <?= htmlspecialchars($data['destination_receipt']) ?></p>
-      <div class="text-end mt-4">
+      <p><strong>Warehouse:</strong> <?= htmlspecialchars($data['warehouse'] ?? 'N/A') ?></p>
+      <div class="text-end mt-4 no-print">
         <a href="supplier_list.php" class="btn-done">Done</a>
       </div>
     <?php else: ?>
       <p class="text-danger">Order not found.</p>
-      <div class="text-end mt-4">
+      <div class="text-end mt-4 no-print">
         <a href="supplier_list.php" class="btn-done">Back</a>
       </div>
     <?php endif; ?>
   </div>
+
+  <script>
+    // Automatically trigger print if ?print=1 is in URL
+    if (window.location.search.includes('print=1')) {
+      window.print();
+    }
+  </script>
 </body>
 </html>

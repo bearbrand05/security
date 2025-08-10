@@ -41,6 +41,12 @@ $categoryItems = [
       color: #007bff; text-decoration: underline; cursor: pointer;
     }
     .view-link:hover { color: #0056b3; }
+    .form-section {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
   </style>
 </head>
 <body class="p-4">
@@ -115,11 +121,13 @@ $categoryItems = [
       <div class="modal-dialog">
         <div class="modal-content p-3">
           <h4>Supplier Details</h4>
-          <p><strong>Name:</strong> <?= htmlspecialchars($supplier['contact_name']) ?></p>
-          <p><strong>Supply:</strong> <?= htmlspecialchars($supplier['supply']) ?></p>
-          <p><strong>Company:</strong> <?= htmlspecialchars($supplier['name_supplier']) ?></p>
-          <p><strong>Review:</strong> <?= htmlspecialchars($supplier['review']) ?></p>
-          <p><strong>Category:</strong> <?= htmlspecialchars($category) ?></p>
+          <div class="form-section">
+            <p><strong>Name:</strong> <?= htmlspecialchars($supplier['contact_name']) ?></p>
+            <p><strong>Supply:</strong> <?= htmlspecialchars($supplier['supply']) ?></p>
+            <p><strong>Company:</strong> <?= htmlspecialchars($supplier['name_supplier']) ?></p>
+            <p><strong>Review:</strong> <?= htmlspecialchars($supplier['review']) ?></p>
+            <p><strong>Category:</strong> <?= htmlspecialchars($category) ?></p>
+          </div>
 
           <form action="submit_order.php" method="POST">
             <input type="hidden" name="item" value="<?= htmlspecialchars($itemname_order) ?>">
@@ -129,18 +137,35 @@ $categoryItems = [
             <input type="hidden" name="supplier_name" value="<?= htmlspecialchars($supplier['name_supplier']) ?>">
             <input type="hidden" name="id_order" value="<?= $order_id ?>">
 
-            <p><strong>Quantity:</strong> <?= $quantity_order ?></p>
-            <p><strong>Destination:</strong> <?= htmlspecialchars($destination_order) ?></p>
+            <div class="form-section">
+              <p><strong>Quantity:</strong> <?= $quantity_order ?></p>
+              <p><strong>Destination:</strong> <?= htmlspecialchars($destination_order) ?></p>
+              
+              <div class="mb-3">
+                <label class="form-label"><strong>Warehouse:</strong></label>
+                <select name="warehouse" class="form-select" required>
+                  <option value="">Select Warehouse</option>
+                  <option value="Warehouse 1">Warehouse 1</option>
+                  <option value="Warehouse 2">Warehouse 2</option>
+                  <option value="Warehouse 3">Warehouse 3</option>
+                  <option value="Warehouse 4">Warehouse 4</option>
+                  <option value="Warehouse 5">Warehouse 5</option>
+                </select>
+              </div>
+            </div>
 
-            <label><strong>ITEM:</strong></label>
-            <select name="selected_item" class="form-select" required>
-              <option value="" disabled selected>Choose Item</option>
-              <?php foreach ($items as $i): ?>
-                <option value="<?= $i ?>"><?= $i ?></option>
-              <?php endforeach; ?>
-            </select>
+            <div class="form-section">
+              <label class="form-label"><strong>ITEM:</strong></label>
+              <select name="selected_item" class="form-select" required>
+                <option value="" disabled selected>Choose Item</option>
+                <?php foreach ($items as $i): ?>
+                  <option value="<?= $i ?>"><?= $i ?></option>
+                <?php endforeach; ?>
+              </select>
+            </div>
 
             <div class="text-end mt-3">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
               <button type="submit" class="btn btn-primary">Submit Order</button>
             </div>
           </form>

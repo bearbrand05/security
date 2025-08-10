@@ -510,25 +510,5 @@ $conn->close();
 
 
 
-DROP TABLE IF EXISTS logistics_table;
 
--- auto-increment
-CREATE TABLE logistics_table (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    item VARCHAR(255) NOT NULL,
-    destination VARCHAR(100) NOT NULL,
-    pickup_date DATE,
-    delivery_date DATE,
-    status VARCHAR(50),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-INSERT INTO logistics_table (id, item, destination, delivery_date, pickup_date, status) VALUES
-(1, 'Brief - Black', 'Cebu City', '2025-08-01', '2025-07-30', 'Shipped'),
-(2, 'Hoodie - Blue', 'Davao City', '2025-08-03', '2025-08-01', 'In Transit'),
-(3, 'Cargo Pants', 'Baguio City', '2025-08-05', '2025-08-02', 'Pending'),
-(4, 'Cap - Red', 'Makati City', '2025-08-04', '2025-08-02', 'Shipped');
-
--- Reset auto-increment to start after 4
-ALTER TABLE logistics_table AUTO_INCREMENT = 5;
 

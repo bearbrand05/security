@@ -54,3 +54,4 @@ CREATE TABLE `history_table` (
   `quantity_history` INT NOT NULL,
   PRIMARY KEY (`id_history`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+tangina

@@ -89,11 +89,14 @@ UPDATE supplier_table SET category = 'Stationery' WHERE id_supplier = 1003;
 UPDATE supplier_table SET category = 'Cleaning Supplies' WHERE id_supplier = 1004;
 
 INSERT INTO order_table (customer_name, destination_order, itemname_order, quantity_order, date_of_order) VALUES
-('Liza Gomez', 'Bacolod', 'Stapler', 80, '2025-08-05'),
-('Inventory', 'Warehouse 1', 'Keyboard', 150, '2025-08-02'),
-('Inventory', 'Warehouse 2', 'Mop', 200, '2025-08-03'),
-('Inventory', 'Warehouse 3', 'Pen', 50, '2025-08-04'),
-('Inventory', 'Warehouse 4', 'Stapler', 80, '2025-08-05'); 
+('Inventory', 'Warehouse 4', 'Stapler', 80, '2025-08-05'),
+('Inventory', 'Warehouse 2', 'Keyboard', 150, '2025-08-02'),
+('Inventory', 'Warehouse 2', 'Mouse', 150, '2025-08-02'),
+('Inventory', 'Warehouse 5', 'Mop', 200, '2025-08-03'),
+('Inventory', 'Warehouse 4', 'Pen', 50, '2025-08-04'),
+('Inventory', 'Warehouse 3', 'Chair', 231, '2025-08-04'),
+('Inventory', 'Warehouse 1', 'Desktop', 80, '2025-08-05');
+
 
 SELECT id_supplier, name_supplier, supply FROM supplier_table;
 UPDATE `inventory_db`.`supplier_table` SET `supply` = 'Desktop, Laptop, Monitor, Phone' WHERE (`id_supplier` = '1000');
@@ -105,7 +108,14 @@ UPDATE `inventory_db`.`supplier_table` SET `supply` = 'Mop, Detergent, Brush' WH
 
 
 
-
+CREATE TABLE warehouse_quantities (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  warehouse VARCHAR(45) NOT NULL,
+  item_name VARCHAR(45) NOT NULL,
+  total_quantity INT NOT NULL DEFAULT 0,
+  last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY (warehouse, item_name)
+);
 
 
 

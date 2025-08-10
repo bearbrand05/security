@@ -4,13 +4,11 @@ $host = "localhost"; $user = "root"; $pass = ""; $dbname = "meow";
 $conn = new mysqli($host, $user, $pass, $dbname);
 if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
 
-// Check if column exists before trying to add it (only runs once)
 $checkColumn = $conn->query("SHOW COLUMNS FROM logistics_table LIKE 'deleted_at'");
 if ($checkColumn->num_rows == 0) {
     $conn->query("ALTER TABLE logistics_table ADD COLUMN deleted_at TIMESTAMP NULL DEFAULT NULL");
 }
 
-// Only update status once, not on every page load
 if (!isset($_SESSION['status_updated'])) {
     $conn->query("UPDATE logistics_table SET status = 'In Transit' WHERE status = 'Delivered'");
     $_SESSION['status_updated'] = true;
@@ -353,37 +351,34 @@ function formatDate($dateString) {
     </div>
     
     <script>
-        // Function to show toast notification
+
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
             const toastMessage = document.getElementById('toast-message');
             const icon = toast.querySelector('i');
             
-            // Set message and type
             toastMessage.textContent = message;
             toast.className = 'toast ' + type;
             
-            // Set appropriate icon
+
             if (type === 'success') {
                 icon.className = 'fas fa-check-circle';
             } else if (type === 'error') {
                 icon.className = 'fas fa-exclamation-circle';
             }
-            
-            // Show toast
+        
             setTimeout(() => {
                 toast.classList.add('show');
             }, 100);
             
-            // Hide toast after 3 seconds
+
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 3000);
         }
         
-        // Handle delete button clicks
+
         document.addEventListener('DOMContentLoaded', function() {
-            // Delete buttons
             const deleteButtons = document.querySelectorAll('.delete-btn');
             deleteButtons.forEach(button => {
                 button.addEventListener('click', function() {
@@ -391,12 +386,11 @@ function formatDate($dateString) {
                     const row = this.closest('tr');
                     
                     if (confirm('Are you sure you want to delete this shipment?')) {
-                        // Create form data
+
                         const formData = new FormData();
                         formData.append('action', 'delete');
                         formData.append('id', id);
                         
-                        // Send AJAX request
                         fetch('', {
                             method: 'POST',
                             body: formData
@@ -404,11 +398,10 @@ function formatDate($dateString) {
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
-                                // Remove row from table
                                 row.remove();
                                 showToast('Shipment moved to deleted items! You can restore it from the bottom of the page.', 'success');
                                 
-                                // Reload page after a short delay to update deleted items section
+
                                 setTimeout(() => {
                                     window.location.reload();
                                 }, 1500);
@@ -423,19 +416,16 @@ function formatDate($dateString) {
                 });
             });
             
-            // Restore buttons
             const restoreButtons = document.querySelectorAll('.restore-btn');
             restoreButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const id = this.getAttribute('data-id');
                     const item = this.closest('.deleted-item');
                     
-                    // Create form data
                     const formData = new FormData();
                     formData.append('action', 'restore');
                     formData.append('id', id);
                     
-                    // Send AJAX request
                     fetch('', {
                         method: 'POST',
                         body: formData
@@ -443,11 +433,9 @@ function formatDate($dateString) {
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            // Remove item from deleted items
                             item.remove();
                             showToast('Shipment restored successfully!', 'success');
                             
-                            // Reload page after a short delay to update main table
                             setTimeout(() => {
                                 window.location.reload();
                             }, 1500);
@@ -492,7 +480,6 @@ function formatDate($dateString) {
 </body>
 </html>
 <?php
-// Handle AJAX requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json');
     

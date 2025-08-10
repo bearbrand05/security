@@ -2,6 +2,9 @@
 $host = "localhost";
 $username = "root";
 $password = "";
+<<<<<<< HEAD
+$database = "jalosi";
+=======
 $database = "inventory_db";
 
 

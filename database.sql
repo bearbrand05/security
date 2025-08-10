@@ -1,8 +1,6 @@
-<<<<<<< HEAD
-USE inventory_db;
-=======
 
->>>>>>> 303baf17d177401e3c3fcbc4d3a65964f486a7c3
+USE inventory_db;
+
 
 CREATE TABLE `logistics_table` (
   `id_logistic` INT NOT NULL AUTO_INCREMENT,
@@ -119,6 +117,4 @@ B4B4B8
 C7C8CC
 E3E1D9
 F2EFE5
-=======
-tangina
->>>>>>> 303baf17d177401e3c3fcbc4d3a65964f486a7c3
+

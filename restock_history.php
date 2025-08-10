@@ -77,5 +77,8 @@ $result = $mysqli->query($query);
   </table>
 
 </body>
-
+<<<<<<< HEAD
 </html>
+=======
+</html>
+>>>>>>> 303baf17d177401e3c3fcbc4d3a65964f486a7c3

@@ -4,7 +4,7 @@ $host = "localhost";
 $username = "root";
 $password = "";
 
-$database = "jalosi";
+
 
 $database = "inventory_db";
 

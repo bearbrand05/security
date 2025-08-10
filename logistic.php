@@ -3,8 +3,6 @@ $host = "localhost";
 $user = "root";
 $pass = "";
 
-$dbname = "meow";
-
 $dbname = "inventory_db";
 
 $conn = new mysqli($host, $user, $pass, $dbname);

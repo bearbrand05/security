@@ -2,6 +2,8 @@
   width: 250px;
   height: 100vh;
   box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+  background-color: #fff;
+  border-right: 1px solid #ddd;
 }
 
 .nav-link i {
@@ -14,17 +16,10 @@
   border-radius: 5px;
   font-weight: bold;
   color: #000 !important;
-<<<<<<< HEAD
 }
 
 body {
   background-color: #f9f9f9;
-}
-
-.sidebar {
-  background-color: #fff;
-  height: 100vh;
-  border-right: 1px solid #ddd;
 }
 
 .sidebar a {
@@ -54,6 +49,3 @@ body {
   height: 12px;
   border-radius: 50%;
 }
-=======
-}
->>>>>>> 303baf17d177401e3c3fcbc4d3a65964f486a7c3

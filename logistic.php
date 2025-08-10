@@ -2,11 +2,11 @@
 $host = "localhost";
 $user = "root";
 $pass = "";
-<<<<<<< HEAD
+
 $dbname = "meow";
-=======
+
 $dbname = "inventory_db";
->>>>>>> 303baf17d177401e3c3fcbc4d3a65964f486a7c3
+
 $conn = new mysqli($host, $user, $pass, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
@@ -510,7 +510,7 @@ $conn->close();
 
 
 
-<<<<<<< HEAD
+
 
 DROP TABLE IF EXISTS logistics_table;
 
@@ -533,5 +533,4 @@ INSERT INTO logistics_table (id, item, destination, delivery_date, pickup_date, 
 
 -- Reset auto-increment to start after 4
 ALTER TABLE logistics_table AUTO_INCREMENT = 5;
-=======
->>>>>>> 303baf17d177401e3c3fcbc4d3a65964f486a7c3
+

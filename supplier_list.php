@@ -28,7 +28,6 @@ $categoryItems = [
   <meta charset="UTF-8">
   <title>Supplier List</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<<<<<<< HEAD
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <style>
@@ -148,66 +147,6 @@ $categoryItems = [
         </tbody>
       </table>
     </div>
-=======
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <style>
-    body { font-family: 'Segoe UI', sans-serif; }
-    h2 { font-weight: bold; margin-bottom: 20px; }
-    .btn-back {
-      background-color: #888; color: white; border: none;
-      padding: 6px 20px; border-radius: 5px; text-decoration: none;
-    }
-    .btn-back:hover { background-color: #555; }
-    .view-link {
-      color: #007bff; text-decoration: underline; cursor: pointer;
-    }
-    .view-link:hover { color: #0056b3; }
-  </style>
-</head>
-<body class="p-4">
-  <h2>Suppliers</h2>
-
-  <table class="table table-hover">
-    <thead class="table-light">
-      <tr>
-        <th>ID #</th>
-        <th>Supplier</th>
-        <th>Ratings</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <?php foreach ($result as $supplier): ?>
-        <?php
-        // Find matching pending order using ANY item in supply
-        $matchingOrder = null;
-        $suppliedItems = array_map('trim', explode(',', $supplier['supply']));
-        foreach ($orders as $order) {
-          if (in_array($order['itemname_order'], $suppliedItems)) {
-            $matchingOrder = $order;
-            break;
-          }
-        }
-        ?>
-        <tr>
-          <td>#<?= $supplier['id_supplier'] ?></td>
-          <td><?= htmlspecialchars($supplier['name_supplier']) ?></td>
-          <td><?= is_null($supplier['ratings']) ? 'N/A' : number_format($supplier['ratings'], 1) . ' / 5.0' ?></td>
-          <td>
-            <?php if ($matchingOrder): ?>
-              <button class="view-link" data-bs-toggle="modal" data-bs-target="#supplierModal<?= $supplier['id_supplier'] ?>">view details</button>
-            <?php else: ?>
-              <span class="text-muted">No order</span>
-            <?php endif; ?>
-          </td>
-        </tr>
-      <?php endforeach; ?>
-    </tbody>
-  </table>
-
-  <div class="text-end">
-    <a href="supply.php" class="btn-back">Back</a>
->>>>>>> 303baf17d177401e3c3fcbc4d3a65964f486a7c3
   </div>
 
   <!-- Modals for each supplier -->
@@ -234,7 +173,6 @@ $categoryItems = [
     $order_id = $matchingOrder['id_order'];
     ?>
     <div class="modal fade" id="supplierModal<?= $supplier['id_supplier'] ?>" tabindex="-1">
-<<<<<<< HEAD
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header bg-light">
@@ -329,40 +267,6 @@ $categoryItems = [
               </div>
             </form>
           </div>
-=======
-      <div class="modal-dialog">
-        <div class="modal-content p-3">
-          <h4>Supplier Details</h4>
-          <p><strong>Name:</strong> <?= htmlspecialchars($supplier['contact_name']) ?></p>
-          <p><strong>Supply:</strong> <?= htmlspecialchars($supplier['supply']) ?></p>
-          <p><strong>Company:</strong> <?= htmlspecialchars($supplier['name_supplier']) ?></p>
-          <p><strong>Review:</strong> <?= htmlspecialchars($supplier['review']) ?></p>
-          <p><strong>Category:</strong> <?= htmlspecialchars($category) ?></p>
-
-          <form action="submit_order.php" method="POST">
-            <input type="hidden" name="item" value="<?= htmlspecialchars($itemname_order) ?>">
-            <input type="hidden" name="destination" value="<?= htmlspecialchars($destination_order) ?>">
-            <input type="hidden" name="date_of_order" value="<?= $date_of_order ?>">
-            <input type="hidden" name="quantity" value="<?= $quantity_order ?>">
-            <input type="hidden" name="supplier_name" value="<?= htmlspecialchars($supplier['name_supplier']) ?>">
-            <input type="hidden" name="id_order" value="<?= $order_id ?>">
-
-            <p><strong>Quantity:</strong> <?= $quantity_order ?></p>
-            <p><strong>Destination:</strong> <?= htmlspecialchars($destination_order) ?></p>
-
-            <label><strong>ITEM:</strong></label>
-            <select name="selected_item" class="form-select" required>
-              <option value="" disabled selected>Choose Item</option>
-              <?php foreach ($items as $i): ?>
-                <option value="<?= $i ?>"><?= $i ?></option>
-              <?php endforeach; ?>
-            </select>
-
-            <div class="text-end mt-3">
-              <button type="submit" class="btn btn-primary">Submit Order</button>
-            </div>
-          </form>
->>>>>>> 303baf17d177401e3c3fcbc4d3a65964f486a7c3
         </div>
       </div>
     </div>

@@ -54,7 +54,7 @@ $result = $conn->query($sql);
           <th>Item name</th>
           <th>Quantity</th>
           <th>Date of order</th>
-          <th></th>
+          <th>Action</th>
         </tr>
       </thead>
       <tbody>
@@ -81,8 +81,4 @@ $result = $conn->query($sql);
     </table>
   </div>
 </body>
-<<<<<<< HEAD
 </html>
-=======
-</html>
->>>>>>> 303baf17d177401e3c3fcbc4d3a65964f486a7c3

@@ -2,11 +2,8 @@
 $host = "localhost";
 $username = "root";
 $password = "";
-<<<<<<< HEAD
-$database = "jalosi";
-=======
 $database = "inventory_db";
->>>>>>> 303baf17d177401e3c3fcbc4d3a65964f486a7c3
+
 
 $conn = new mysqli($host, $username, $password, $database);
 if ($conn->connect_error) {
@@ -153,9 +150,4 @@ while ($row = $result->fetch_assoc()) {
 </body>
 </html>
 
-<<<<<<< HEAD
 <?php $conn->close(); ?>
-
-=======
-<?php $conn->close(); ?>
->>>>>>> 303baf17d177401e3c3fcbc4d3a65964f486a7c3

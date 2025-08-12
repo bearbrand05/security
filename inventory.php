@@ -40,7 +40,7 @@ while ($row = $result->fetch_assoc()) {
       --primary-bg: #C7C8CC;
       --secondary-bg: #E3E1D9;
       --accent-light: #F2EFE5;
-      --accent-dark: #1C352D;
+      --accent-dark: #253d36ff;
       --highlight-green: #28a745;
       --highlight-red: #dc3545;
       --highlight-blue: #007bff;
@@ -62,7 +62,7 @@ while ($row = $result->fetch_assoc()) {
       color: white !important;
     }
     
-    .dashboard-header {
+    .dashboard-header { 
       background-color: white;
       border-radius: 10px;
       padding: 1.5rem;

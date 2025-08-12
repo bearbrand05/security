@@ -2,7 +2,7 @@
 $host = "localhost";
 $user = "root";
 $pass = "";
-$dbname = "meow";
+$dbname = "inventory_db";
 $conn = new mysqli($host, $user, $pass, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
@@ -101,7 +101,7 @@ $deleted_result = $conn->query($deleted_sql);
         }
         
         header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, #343A40, #3F4449);
             color: white;
             padding: 35px 40px;
             display: flex;
@@ -654,19 +654,3 @@ $conn->close();
 
 
 
-CREATE TABLE logistics_table (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    item VARCHAR(255) NOT NULL,
-    destination VARCHAR(100) NOT NULL,
-    pickup_date DATE,
-    delivery_date DATE,
-    status VARCHAR(50),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP NULL DEFAULT NULL
-);
-
-INSERT INTO logistics_table (id, item, destination, delivery_date, pickup_date, status, deleted_at) VALUES
-(1, 'T-Shirt - Black', 'Cebu City', '2025-08-01', '2025-07-30', 'In Transit', NULL),
-(2, 'Hoodie - Blue', 'Davao City', '2025-08-03', '2025-08-01', 'In Transit', NULL),
-(3, 'Cargo Pants', 'Baguio City', '2025-08-05', '2025-08-02', 'Pending', NULL),
-(4, 'Cap - Red', 'Makati City', '2025-08-04', '2025-08-02', 'Shipped', NULL);

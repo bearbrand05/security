@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Sidebar Iframe Dashboard</title>
+  <title>Admin Dashboard</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <style>
@@ -10,8 +10,7 @@
       margin: 0;
       padding: 0;
       height: 100%;
-      overflow: hidden;
-      background-color: #E3E1D9;
+      font-family: Arial, sans-serif;
     }
 
     .d-flex {
@@ -20,66 +19,66 @@
 
     /* Sidebar */
     .sidebar {
-      width: 250px;
-      background-color: #B4B4B8;
-      border-right: 1px solid #aaa;
-      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-      padding: 1rem;
+      width: 220px;
+      background-color: #343a40;
+      color: white;
     }
 
     .admin-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      color: white;
-      margin-bottom: 1rem;
+      padding: 1rem;
+      border-bottom: 1px solid #495057;
+      text-align: center;
     }
 
-    .admin-bar .bar-decor {
-      flex-grow: 1;
-      height: 4px;
-      background-color: #888;
-      margin-left: 10px;
-      border-radius: 2px;
+    .admin-name {
+      font-weight: bold;
+      margin-top: 5px;
     }
 
     /* Sidebar links */
-    .sidebar a {
-      display: block;
-      padding: 10px 12px;
-      color: #fff;
+    .sidebar .nav {
+      padding: 10px;
+    }
+
+    .sidebar .nav-link {
+      color: #adb5bd;
+      padding: 10px 15px;
+      margin-bottom: 5px;
+      border-radius: 4px;
       text-decoration: none;
-      font-weight: 500;
-      font-size: 1.05rem;
-      transition: background-color 0.2s, color 0.2s, transform 0.2s;
-      border-radius: 5px;
+      display: flex;
+      align-items: center;
     }
 
-    .sidebar a:hover {
-      background-color: #A0A0A4;
-      color: #fff;
-      transform: scale(1.03);
+    .sidebar .nav-link:hover {
+      background-color: #495057;
+      color: white;
     }
 
-    .nav-link.active {
-      margin-left: 10px;
-      background-color: #C7C8CC;
-      font-weight: bold;
-      color: #000 !important;
+    .sidebar .nav-link.active {
+      background-color: #007bff;
+      color: white;
     }
 
-    .nav-link i {
-      margin-right: 8px;
+    .sidebar .nav-link i {
+      margin-right: 10px;
+      font-size: 1.1rem;
     }
 
+    /* Main content */
     .content {
       flex-grow: 1;
+      background-color: #f8f9fa;
+      padding: 20px;
     }
 
     iframe {
       width: 100%;
-      height: 100vh;
+      height: 100%;
       border: none;
+      background-color: white;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
   </style>
 </head>
@@ -88,33 +87,33 @@
     <!-- Sidebar -->
     <div class="sidebar">
       <div class="admin-bar">
-        <span><i class="bi bi-person"></i> <strong>ADMIN</strong></span>
-        
+        <i class="bi bi-person-circle" style="font-size: 2rem;"></i>
+        <div class="admin-name">ADMIN</div>
       </div>
       <ul class="nav flex-column" id="sidebarMenu">
-        <li class="nav-item mb-2">
+        <li class="nav-item">
           <a href="dashboard.php" data-page="dashboard.php" target="contentFrame" class="nav-link">
-            <i class="bi bi-grid"></i> Dashboard
+            <i class="bi bi-speedometer2"></i> Dashboard
           </a>
         </li>
-        <li class="nav-item mb-2">
+        <li class="nav-item">
           <a href="supply.php" data-page="supply.php" target="contentFrame" class="nav-link">
             <i class="bi bi-box-seam"></i> Supply & Order
           </a>
         </li>
-        <li class="nav-item mb-2">
+        <li class="nav-item">
           <a href="inventory.php" data-page="inventory.php" target="contentFrame" class="nav-link">
             <i class="bi bi-archive"></i> Inventory
           </a>
         </li>
-        <li class="nav-item mb-2">
-          <a href="logistic.php" data-page="logistics.php" target="contentFrame" class="nav-link">
-            <i class="bi bi-cart3"></i> Logistics
+        <li class="nav-item">
+          <a href="logistic.php" data-page="logistic.php" target="contentFrame" class="nav-link">
+            <i class="bi bi-truck"></i> Logistics
           </a>
         </li>
-        <li class="nav-item mb-2">
+        <li class="nav-item">
           <a href="history.php" data-page="history.php" target="contentFrame" class="nav-link">
-            <i class="bi bi-person-lines-fill"></i> History
+            <i class="bi bi-clock-history"></i> History
           </a>
         </li>
       </ul>
@@ -122,38 +121,33 @@
 
     <!-- Main Content Area -->
     <div class="content">
-      <iframe id="contentFrame" name="contentFrame" src=""></iframe>
+      <iframe id="contentFrame" name="contentFrame" src="dashboard.php"></iframe>
     </div>
   </div>
 
-  <!-- Script to handle active link and iframe load -->
   <script>
-    const links = document.querySelectorAll('#sidebarMenu .nav-link');
-    const iframe = document.getElementById('contentFrame');
+    document.addEventListener('DOMContentLoaded', function() {
+      const links = document.querySelectorAll('#sidebarMenu .nav-link');
+      const iframe = document.getElementById('contentFrame');
 
-    function setActiveLink(page) {
+      function setActiveLink(page) {
+        links.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('data-page') === page);
+        });
+      }
+
+      // Set initial active link based on iframe src
+      setActiveLink(iframe.src.split('/').pop());
+
       links.forEach(link => {
-        const linkPage = link.getAttribute('data-page');
-        if (linkPage === page) {
-          link.classList.add('active');
-        } else {
-          link.classList.remove('active');
-        }
-      });
-    }
-
-    const savedPage = localStorage.getItem('activePage') || 'dashboard.php';
-    iframe.src = savedPage;
-    setActiveLink(savedPage);
-
-    links.forEach(link => {
-      link.addEventListener('click', function () {
-        const page = this.getAttribute('data-page');
-        localStorage.setItem('activePage', page);
-        setActiveLink(page);
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          const page = this.getAttribute('data-page');
+          iframe.src = page;
+          setActiveLink(page);
+        });
       });
     });
   </script>
 </body>
-
 </html>

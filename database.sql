@@ -11,13 +11,14 @@ CREATE TABLE `logistics_table` (
   `status` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id_logistic`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
+//wag kalimutan mag drop ng table, eto yung bagong table natin
 CREATE TABLE `inventory_table` (
   `id_inventory` INT NOT NULL AUTO_INCREMENT,
   `warehouse` VARCHAR(45) NOT NULL,
   `itemname_invent` VARCHAR(45) NOT NULL,
   `stock_invent` INT NOT NULL,
   `restock_invent` INT NOT NULL,
+  `categories`VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id_inventory`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -133,4 +134,3 @@ B4B4B8
 C7C8CC
 E3E1D9
 F2EFE5
-

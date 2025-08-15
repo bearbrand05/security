@@ -7,27 +7,47 @@ $mysqli = new mysqli($host, $user, $pass, $dbname);
 if ($mysqli->connect_error) {
   die("Connection failed: " . $mysqli->connect_error);
 }
-$query = "SELECT * FROM inventory_table";
-$result = $mysqli->query($query);
-$items = [];
-$totalStock = 0;
-$highestRestock = 0;
-$lowestStock = PHP_INT_MAX;
-$warehouseHighDemand = '';
-$warehouseLowStock = '';
+//babang table
+$items = [];  
+$result = $mysqli->query("SELECT id_inventory, warehouse, categories, SUM(stock_invent) as total_categories_number from inventory_table group by categories");
 while ($row = $result->fetch_assoc()) {
   $items[] = $row;
-  $totalStock += $row['stock_invent'];
-  if ($row['restock_invent'] > $highestRestock) {
-    $highestRestock = $row['restock_invent'];
-    $warehouseHighDemand = $row['warehouse'];
-  }
-  if ($row['stock_invent'] < $lowestStock) {
-    $lowestStock = $row['stock_invent'];
-    $warehouseLowStock = $row['warehouse'];
-  }
+}
+// gang dito
+// para sa highest demand lang
+$highestwarehouse = "";
+$highestitem = "";
+$highestrestock = 0;
+$result = $mysqli->query("SELECT itemname_invent, warehouse, restock_invent
+                            FROM inventory_table 
+                            WHERE restock_invent = (SELECT MAX(restock_invent) FROM inventory_table)");
+if( $rows = $result->fetch_assoc() ) {
+  $highestwarehouse = $rows['warehouse'];
+  $highestitem = $rows['itemname_invent'];
+  $highestrestock = $rows['restock_invent'];
+}
+// gang dito
+// para sa lowest stock lang
+$lowstockwarehouse = "";
+$lowitem = "";
+$lowstock = 0;
+$result = $mysqli->query(("SELECT itemname_invent, warehouse, stock_invent 
+                  FROM  inventory_table 
+                  WHERE stock_invent = (SELECT MIN(stock_invent)FROM inventory_table);"));
+if ($rows = $result->fetch_assoc()) {
+  $lowstockwarehouse = $rows['warehouse'];
+  $lowitem = $rows['itemname_invent'];
+  $lowstock = $rows['stock_invent'];
+}
+//hanggang dito rin
+// our sum rheal
+$totalsumofstocks = 0;
+$result = $mysqli->query("SELECT SUM(stock_invent) AS total_stock FROM inventory_table");
+if ($row = $result->fetch_assoc()) {
+  $totalsumofstocks = $row['total_stock'];
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,7 +60,7 @@ while ($row = $result->fetch_assoc()) {
       --primary-bg: #C7C8CC;
       --secondary-bg: #E3E1D9;
       --accent-light: #F2EFE5;
-      --accent-dark: #253d36ff;
+      --accent-dark: #1C352D;
       --highlight-green: #28a745;
       --highlight-red: #dc3545;
       --highlight-blue: #007bff;
@@ -62,7 +82,7 @@ while ($row = $result->fetch_assoc()) {
       color: white !important;
     }
     
-    .dashboard-header { 
+    .dashboard-header {
       background-color: white;
       border-radius: 10px;
       padding: 1.5rem;
@@ -181,6 +201,28 @@ while ($row = $result->fetch_assoc()) {
       margin-top: 2rem;
       text-align: center;
     }
+    
+    /* Added for the modal and view button */
+    .modal-items-list {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .items-list-item {
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .items-list-item:last-child {
+      border-bottom: none;
+    }
+    .category-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .view-items-btn-sm {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+    }
   </style>
 </head>
 <body>
@@ -219,21 +261,21 @@ while ($row = $result->fetch_assoc()) {
         <div class="info-box">
           <i class="bi bi-graph-up-arrow text-success"></i>
           <h6>HIGHEST DEMAND</h6>
-          <h4><?= $warehouseHighDemand ?><br><span class="badge bg-success badge-stock"><?= number_format($highestRestock) ?></span></h4>
+          <h4><?= $highestitem ?><br><span class="badge bg-success badge-stock"><?= ($highestrestock) ?></span></h4>
         </div>
       </div>
       <div class="col-md-4 mb-3">
         <div class="info-box">
           <i class="bi bi-exclamation-triangle text-danger"></i>
           <h6>LOWEST STOCK</h6>
-          <h4><?= $warehouseLowStock ?><br><span class="badge bg-danger badge-stock"><?= number_format($lowestStock) ?></span></h4>
+          <h4><?= $lowitem ?><br><span class="badge bg-danger badge-stock"><?= ($lowstock) ?></span></h4>
         </div>
       </div>
       <div class="col-md-4 mb-3">
         <div class="info-box">
           <i class="bi bi-boxes text-primary"></i>
           <h6>TOTAL ITEMS</h6>
-          <h4>Warehouse 1 - 5<br><span class="badge bg-primary badge-stock"><?= number_format($totalStock) ?></span></h4>
+          <h4>All Warehouses<br><span class="badge bg-primary badge-stock"><?= number_format($totalsumofstocks) ?></span></h4>
         </div>
       </div>
     </div>
@@ -266,9 +308,20 @@ while ($row = $result->fetch_assoc()) {
                 <tr>
                   <td style="background-color: #F9F6EE; font-weight: 600;">#<?= $item['id_inventory'] ?></td>
                   <td><?= htmlspecialchars($item['warehouse']) ?></td>
-                  <td style="background-color: #FAF3E0;"><?= htmlspecialchars($item['itemname_invent']) ?></td>
+                  <td style="background-color: #FAF3E0;">
+                    <div class="category-cell">
+                      <?= htmlspecialchars($item['categories']) ?>
+                      <button class="btn btn-sm btn-outline-secondary view-items-btn-sm view-items-btn" 
+                              data-category="<?= htmlspecialchars($item['categories']) ?>"
+                              data-bs-toggle="modal" 
+                              data-bs-target="#itemsModal"
+                              title="View items in this category">
+                        <i class="bi bi-list-ul"></i>
+                      </button>
+                    </div>
+                  </td>
                   <td style="background-color: #F5F5DC; font-weight: 600;">
-                    <span class="badge bg-secondary badge-stock"><?= $item['stock_invent'] ?></span>
+                    <span class="badge bg-secondary badge-stock"><?= $item['total_categories_number'] ?></span>
                   </td>
                 </tr>
               <?php endforeach; ?>
@@ -286,6 +339,46 @@ while ($row = $result->fetch_assoc()) {
     </div>
   </footer>
 
+  <!-- Items Modal -->
+  <div class="modal fade" id="itemsModal" tabindex="-1" aria-labelledby="itemsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="itemsModalLabel">Items in Category: <span id="modalCategoryName"></span></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body modal-items-list" id="modalItemsList">
+          <!-- Items will be loaded here via AJAX -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // When a view items button is clicked
+      document.querySelectorAll('.view-items-btn').forEach(button => {
+        button.addEventListener('click', function() {
+          const category = this.getAttribute('data-category');
+          document.getElementById('modalCategoryName').textContent = category;
+          
+          // Fetch items for this category via AJAX
+          fetch('get_items_by_category.php?category=' + encodeURIComponent(category))
+            .then(response => response.text())
+            .then(data => {
+              document.getElementById('modalItemsList').innerHTML = data;
+            })
+            .catch(error => {
+              document.getElementById('modalItemsList').innerHTML = 
+                '<div class="alert alert-danger">Error loading items: ' + error + '</div>';
+            });
+        });
+      });
+    });
+  </script>
 </body>
 </html>

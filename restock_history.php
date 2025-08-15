@@ -7,11 +7,14 @@ $mysqli = new mysqli($host, $user, $pass, $dbname);
 if ($mysqli->connect_error) {
   die("Connection failed: " . $mysqli->connect_error);
 }
-$query = "SELECT * FROM inventory_table ORDER BY id_inventory";
-$result = $mysqli->query($query);
+$items = [];
+$result = $mysqli->query("SELECT id_inventory, warehouse, categories, SUM(restock_invent) as total_categories_num from inventory_table group by categories;");
+while($row = $result->fetch_assoc()) {
+  $items[] = $row;
+}
 ?>
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html> 
+<html lang="en">  
 <head>
   <meta charset="UTF-8">
   <title>Restock History</title>
@@ -129,6 +132,28 @@ $result = $mysqli->query($query);
       margin-top: 2rem;
       text-align: center;
     }
+    
+    /* Added for the modal and view button */
+    .modal-items-list {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .items-list-item {
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .items-list-item:last-child {
+      border-bottom: none;
+    }
+    .category-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .view-items-btn-sm {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+    }
   </style>
 </head>
 <body>
@@ -168,7 +193,7 @@ $result = $mysqli->query($query);
           <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
         </a>
         <h5 class="m-0 text-center flex-grow-1">ORDER/RESTOCK HISTORY</h5>
-        <div style="width: 120px;"></div> <!-- placeholder to balance space -->
+        <div style="width: 120px;"></div>
       </div>
       
       <div class="table-responsive">
@@ -182,19 +207,30 @@ $result = $mysqli->query($query);
             </tr> 
           </thead>
           <tbody>
-            <?php if ($result && $result->num_rows > 0): ?>
-              <?php while ($row = $result->fetch_assoc()): ?>
+            <?php if (empty($items)): ?>
+              <tr><td colspan="4" class="text-muted text-center py-3">No items in inventory.</td></tr>
+            <?php else: ?>
+              <?php foreach ($items as $item): ?>
                 <tr>
-                  <td style="background-color: #F9F6EE; font-weight: 600;">#<?= $row['id_inventory'] ?></td>
-                  <td><?= htmlspecialchars($row['warehouse']) ?></td>
-                  <td style="background-color: #FAF3E0;"><?= htmlspecialchars($row['itemname_invent']) ?></td>
+                  <td style="background-color: #F9F6EE; font-weight: 600;">#<?= $item['id_inventory'] ?></td>
+                  <td><?= htmlspecialchars($item['warehouse']) ?></td>
+                  <td style="background-color: #FAF3E0;">
+                    <div class="category-cell">
+                      <?= htmlspecialchars($item['categories']) ?>
+                      <button class="btn btn-sm btn-outline-secondary view-items-btn-sm view-items-btn" 
+                              data-category="<?= htmlspecialchars($item['categories']) ?>"
+                              data-bs-toggle="modal" 
+                              data-bs-target="#itemsModal"
+                              title="View items in this category">
+                        <i class="bi bi-list-ul"></i>
+                      </button>
+                    </div>
+                  </td>
                   <td style="background-color: #F5F5DC; font-weight: 600;">
-                    <span class="badge badge-restock"><?= $row['restock_invent'] ?></span>
+                    <span class="badge bg-secondary badge-stock"><?= $item['total_categories_num'] ?></span>
                   </td>
                 </tr>
-              <?php endwhile; ?>
-            <?php else: ?>
-              <tr><td colspan="4" class="text-muted text-center py-3">No restock records found.</td></tr>
+              <?php endforeach; ?>
             <?php endif; ?>
           </tbody>
         </table>
@@ -205,10 +241,49 @@ $result = $mysqli->query($query);
   <!-- Footer -->
   <footer class="footer">
     <div class="container">
-      <p>&copy; <?= date('Y') ?> Apolista Warehouse Management System. All rights reserved.</p>
     </div>
   </footer>
 
+  <!-- Items Modal -->
+  <div class="modal fade" id="itemsModal" tabindex="-1" aria-labelledby="itemsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="itemsModalLabel">Items in Category: <span id="modalCategoryName"></span></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body modal-items-list" id="modalItemsList">
+          <!-- Items will be loaded here via AJAX -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // When a view items button is clicked
+      document.querySelectorAll('.view-items-btn').forEach(button => {
+        button.addEventListener('click', function() {
+          const category = this.getAttribute('data-category');
+          document.getElementById('modalCategoryName').textContent = category;
+          
+          // Fetch items for this category via AJAX
+          fetch('get_items_by_category.php?category=' + encodeURIComponent(category))
+            .then(response => response.text())
+            .then(data => {
+              document.getElementById('modalItemsList').innerHTML = data;
+            })
+            .catch(error => {
+              document.getElementById('modalItemsList').innerHTML = 
+                '<div class="alert alert-danger">Error loading items: ' + error + '</div>';
+            });
+        });
+      });
+    });
+  </script>
 </body>
 </html>

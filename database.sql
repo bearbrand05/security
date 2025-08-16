@@ -179,4 +179,9 @@ CREATE TABLE `order_receipt` (
 
 
 select * from inventory_table;
->>>>>>> e445f5fa42f2800aa9b2efb0b83b0d5734003343
+
+ALTER TABLE order_receipt ADD COLUMN supplier_name VARCHAR(45) AFTER warehouse;
+
+
+ALTER TABLE inventory_table 
+MODIFY COLUMN categories VARCHAR(45) NOT NULL;

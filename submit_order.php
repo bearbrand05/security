@@ -48,14 +48,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        // Calculate arrival date (3 days from order date)
+        // Calculate dates
         $arrive_date = date('Y-m-d', strtotime($date_of_order . ' +3 days'));
+        $pickup_date = date('Y-m-d', strtotime($date_of_order . ' +1 day')); // Assuming pickup 1 day after order
+        $delivery_date = $arrive_date;
+        $status = 'Processing'; // Initial status
 
         // Start transaction
         $conn->begin_transaction();
 
         try {
-            // 1. Update inventory table with proper category
+            // 1. Update inventory table
             $inventory_sql = "INSERT INTO inventory_table 
                             (warehouse, itemname_invent, stock_invent, restock_invent, categories) 
                             VALUES (?, ?, ?, ?, ?) 
@@ -73,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             $inventory_stmt->close();
 
-            // 2. Process the order in order_receipt table (now includes supplier)
+            // 2. Process the order in order_receipt table
             $order_sql = "INSERT INTO order_receipt 
                          (item_receipt, quantity_reciept, arrive_receipt, destination_receipt, warehouse, supplier_name) 
                          VALUES (?, ?, ?, ?, ?, ?)";
@@ -88,7 +91,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $receipt_id = $order_stmt->insert_id;
             $order_stmt->close();
 
-            // 3. Remove from pending orders if exists
+            // 3. Add to logistics tracking
+            $logistics_sql = "INSERT INTO logistics_table 
+                            (item, destination, pickup_date, delivery_date, status) 
+                            VALUES (?, ?, ?, ?, ?)";
+            $logistics_stmt = $conn->prepare($logistics_sql);
+            if (!$logistics_stmt) {
+                throw new Exception("Prepare failed: " . $conn->error);
+            }
+            $logistics_stmt->bind_param("sssss", $selected_item, $destination, $pickup_date, $delivery_date, $status);
+            if (!$logistics_stmt->execute()) {
+                throw new Exception("Execute failed: " . $logistics_stmt->error);
+            }
+            $logistics_id = $logistics_stmt->insert_id;
+            $logistics_stmt->close();
+
+            // 4. Remove from pending orders if exists
             if ($order_id > 0) {
                 $del_sql = "DELETE FROM order_table WHERE id_order = ?";
                 $del_stmt = $conn->prepare($del_sql);
@@ -103,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $conn->commit();
-            header("Location: receipt.php?id=" . $receipt_id);
+            header("Location: receipt.php?id=" . $receipt_id . "&logistics_id=" . $logistics_id);
             exit();
 
         } catch (Exception $e) {
@@ -112,7 +130,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
     } catch (Exception $e) {
-        // More user-friendly error handling
         header("Location: inventory.php?error=" . urlencode($e->getMessage()));
         exit();
     }

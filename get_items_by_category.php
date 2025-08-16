@@ -34,5 +34,5 @@ if ($result->num_rows > 0) {
   echo '<div class="alert alert-info">No items found in this category.</div>';
 }
 
-//tangina tite titieiteiteiteiite
+
 ?>

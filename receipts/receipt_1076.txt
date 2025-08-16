@@ -1,0 +1,9 @@
+ORDER RECEIPT
+==============================
+Receipt ID: 1076
+Item: Chair
+Quantity: 231
+Arrival Date: 2025-08-07
+Destination: Warehouse 3
+Generated: 2025-08-16 11:37:31
+==============================

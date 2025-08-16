@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $destination = trim($_POST['destination'] ?? '');
         $date_of_order = $_POST['date_of_order'] ?? date('Y-m-d');
         $order_id = filter_var($_POST['id_order'] ?? 0, FILTER_VALIDATE_INT);
-        $supplier_name = trim($_POST['name_supplier'] ?? ''); // Changed from supplier_name to name_supplier
+        $supplier_name = trim($_POST['name_supplier'] ?? '');
 
         // Validate required fields
         if (empty($selected_item)) {
@@ -31,6 +31,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new Exception("Invalid order date.");
         }
 
+        // Determine category based on item name
+        $category_map = [
+            'Electronics' => ['Desktop', 'Laptop', 'Monitor', 'Phone'],
+            'Peripherals' => ['Keyboard', 'Mouse', 'Headset'],
+            'Furniture' => ['Chair', 'Desk', 'Cabinet'],
+            'Stationery' => ['Pen', 'Notebook', 'Stapler'],
+            'Cleaning Supplies' => ['Mop', 'Detergent', 'Brush']
+        ];
+
+        $category = 'General';
+        foreach ($category_map as $cat => $items) {
+            if (in_array($selected_item, $items)) {
+                $category = $cat;
+                break;
+            }
+        }
+
         // Calculate arrival date (3 days from order date)
         $arrive_date = date('Y-m-d', strtotime($date_of_order . ' +3 days'));
 
@@ -38,10 +55,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $conn->begin_transaction();
 
         try {
-            // 1. Update inventory table
+            // 1. Update inventory table with proper category
             $inventory_sql = "INSERT INTO inventory_table 
                             (warehouse, itemname_invent, stock_invent, restock_invent, categories) 
-                            VALUES (?, ?, ?, ?, 'General') 
+                            VALUES (?, ?, ?, ?, ?) 
                             ON DUPLICATE KEY UPDATE 
                             stock_invent = stock_invent + VALUES(stock_invent),
                             restock_invent = restock_invent + VALUES(restock_invent)";
@@ -50,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!$inventory_stmt) {
                 throw new Exception("Prepare failed: " . $conn->error);
             }
-            $inventory_stmt->bind_param("ssii", $warehouse, $selected_item, $quantity, $quantity);
+            $inventory_stmt->bind_param("ssiis", $warehouse, $selected_item, $quantity, $quantity, $category);
             if (!$inventory_stmt->execute()) {
                 throw new Exception("Execute failed: " . $inventory_stmt->error);
             }
@@ -95,8 +112,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
     } catch (Exception $e) {
-        die("Error: " . $e->getMessage());
+        // More user-friendly error handling
+        header("Location: inventory.php?error=" . urlencode($e->getMessage()));
+        exit();
     }
 } else {
-    die("Invalid request method.");
+    header("Location: inventory.php?error=Invalid+request+method");
+    exit();
 }

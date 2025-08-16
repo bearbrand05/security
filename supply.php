@@ -1,7 +1,11 @@
 <?php
 include 'db.php';
 
-$sql = "SELECT * FROM order_table ORDER BY date_of_order DESC";
+// Fetch pending orders with supplier information
+$sql = "SELECT o.*, s.name_supplier 
+        FROM order_table o
+        LEFT JOIN supplier_table s ON FIND_IN_SET(o.itemname_order, REPLACE(s.supply, ' ', ''))
+        ORDER BY o.date_of_order DESC";
 $result = $conn->query($sql);
 ?>
 <!DOCTYPE html>
@@ -87,6 +91,16 @@ $result = $conn->query($sql);
       border-radius: 4px;
       font-size: 12px;
     }
+    
+    .supplier-badge {
+      background-color: #e2f0fd;
+      color: #0d6efd;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      display: inline-block;
+      margin-top: 3px;
+    }
   </style>
 </head>
 <body>
@@ -103,6 +117,7 @@ $result = $conn->query($sql);
             <th>Item</th>
             <th>Qty</th>
             <th>Order Date</th>
+            <th>Supplier</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -117,15 +132,27 @@ $result = $conn->query($sql);
                 <td><?= $row['quantity_order'] ?></td>
                 <td><?= date("M d, Y", strtotime($row['date_of_order'])) ?></td>
                 <td>
-                  <a href="supplier_list.php?order_id=<?= $row['id_order'] ?>" class="btn-action">
-                    <i class="bi bi-arrow-right-circle"></i> Process
-                  </a>
+                  <?php if (!empty($row['name_supplier'])): ?>
+                    <span class="supplier-badge"><?= htmlspecialchars($row['name_supplier']) ?></span>
+                  <?php else: ?>
+                    <span class="text-muted">No supplier</span>
+                  <?php endif; ?>
+                </td>
+                <td>
+                  <?php if (!empty($row['name_supplier'])): ?>
+                    <a href="supplier_list.php?order_id=<?= $row['id_order'] ?>&item=<?= urlencode($row['itemname_order']) ?>" 
+                       class="btn-action">
+                      <i class="bi bi-arrow-right-circle"></i> Process
+                    </a>
+                  <?php else: ?>
+                    <span class="text-muted">No supplier</span>
+                  <?php endif; ?>
                 </td>
               </tr>
             <?php endwhile; ?>
           <?php else: ?>
             <tr>
-              <td colspan="7" class="text-center no-orders">
+              <td colspan="8" class="text-center no-orders">
                 <i class="bi bi-inbox" style="font-size: 24px;"></i><br>
                 No pending orders found
               </td>

@@ -1,8 +1,13 @@
 <?php
 include 'db.php';
 
-// Fetch suppliers
-$sql = "SELECT * FROM supplier_table ORDER BY id_supplier ASC";
+// Modified query to get only one entry per supplier
+$sql = "SELECT * FROM (
+          SELECT * FROM supplier_table
+          WHERE name_supplier IN ('Supplier 1', 'Supplier 2', 'Supplier 3', 'Supplier 4', 'Supplier 5')
+          ORDER BY id_supplier
+        ) AS temp
+        GROUP BY name_supplier";
 $result = $conn->query($sql);
 
 // Fetch pending orders
@@ -222,7 +227,7 @@ $categoryItems = [
                 <input type="hidden" name="destination" value="<?= htmlspecialchars($destination_order) ?>">
                 <input type="hidden" name="date_of_order" value="<?= $date_of_order ?>">
                 <input type="hidden" name="quantity" value="<?= $quantity_order ?>">
-                <input type="hidden" name="supplier_name" value="<?= htmlspecialchars($supplier['name_supplier']) ?>">
+                <input type="hidden" name="name_supplier" value="<?= htmlspecialchars($supplier['name_supplier']) ?>">
                 <input type="hidden" name="id_order" value="<?= $order_id ?>">
 
                 <div class="row">

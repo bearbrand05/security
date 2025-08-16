@@ -32,13 +32,19 @@ CREATE TABLE `order_table` (
   PRIMARY KEY (`id_order`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- drop table supplier table gawa ulit
 CREATE TABLE `supplier_table` (
   `id_supplier` INT NOT NULL AUTO_INCREMENT,
   `name_supplier` VARCHAR(45) NOT NULL,
+  `contact_name` VARCHAR(45) NOT NULL,
+  `supply` VARCHAR(255) NOT NULL,  -- Comma-separated list of supplied items
+  `category` VARCHAR(45) NOT NULL, -- Main category of supplies
   `ratings` DOUBLE NULL,
+  `review` TEXT NULL,              -- Supplier review/notes
   PRIMARY KEY (`id_supplier`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+drop table supplier_table;
 CREATE TABLE `order_receipt` (
   `id_receipt` INT NOT NULL AUTO_INCREMENT,
   `item_receipt` VARCHAR(45) NOT NULL,
@@ -57,7 +63,7 @@ CREATE TABLE `history_table` (
   `quantity_history` INT NOT NULL,
   PRIMARY KEY (`id_history`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-<<<<<<< HEAD
+
 
 INSERT INTO supplier_table (id_supplier, name_supplier, ratings, contact_name, supply, review) VALUES
 (1000, 'Supplier 1', 4.5, 'John', 'Supply Name 1', 'Good'),
@@ -130,7 +136,35 @@ INSERT INTO logistics_table (id, item, destination, delivery_date, pickup_date, 
 (4, 'Cap - Red', 'Makati City', '2025-08-04', '2025-08-02', 'Shipped');
 
 
+<<<<<<< HEAD
 B4B4B8
 C7C8CC
 E3E1D9
 F2EFE5
+=======
+drop table inventory_table;
+
+
+INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supplier 1', 'Rheal', 'Desktop', 'Electronics', '4.5', 'Good');
+INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supplier 1', 'Rheal', 'Laptop', 'Electronics', '4.5', 'Good');
+INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supplier 1', 'Rheal', 'Monitor', 'Electronics', '4.5', 'Good');
+INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supplier 1', 'Rheal', 'Phone', 'Electronics', '4.5', 'Good');
+INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supplier 2', 'Dwight', 'Keyboard', 'Peripherals', '4.2', 'Okay');
+INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supplier 2', 'Dwight', 'Mouse', 'Peripherals', '4.2', 'Okay');
+INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supplier 2', 'Dwight', 'Headset', 'Peripherals', '4.2', 'Okay');
+INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supplier 3', 'Ralp', 'Chair', 'Furniture', '3.5', 'Decent');
+INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supplier 3', 'Ralp', 'Desk', 'Furniture', '3.5', 'Decent');
+INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supplier 3', 'Ralp', 'Cabinet', 'Furniture', '3.5', 'Decent');
+INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supplier 4', 'Doniel', 'Pen', 'Stationery', '5.0', 'Very Good');
+INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supplier 4', 'Doniel', 'Notebook', 'Stationery', '5.0', 'Very Good');
+INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supplier 4', 'Doniel', 'Stapler', 'Stationery', '5.0', 'Very Good');
+INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supplier 5', 'Lee', 'Mop', 'Cleaning Supplies', '5.0', 'Very Good');
+INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supplier 5', 'Lee', 'Detergent', 'Cleaning Supplies', '5.0', 'Very Good');
+INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supplier 5', 'Lee', 'Brush', 'Cleaning Supplies', '5.0', 'Very Good');
+
+
+ALTER TABLE order_receipt ADD COLUMN supplier_name VARCHAR(45) AFTER warehouse;
+
+
+select * from inventory_table;
+>>>>>>> e445f5fa42f2800aa9b2efb0b83b0d5734003343

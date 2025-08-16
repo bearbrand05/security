@@ -1,0 +1,9 @@
+ORDER RECEIPT
+==============================
+Receipt ID: 1070
+Item: Mop
+Quantity: 200
+Arrival Date: 2025-08-06
+Destination: Davao
+Generated: 2025-08-16 07:40:43
+==============================

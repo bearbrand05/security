@@ -3,7 +3,6 @@ $host = "localhost";
 $user = "root";
 $pass = "";
 $dbname = "inventory_db";
-
 $conn = new mysqli($host, $user, $pass, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
@@ -25,31 +24,26 @@ if (isset($_GET['delete_id'])) {
     
     $stmt = $conn->prepare("UPDATE logistics_table SET deleted_at = NOW() WHERE id = ?");
     $stmt->bind_param("i", $id);
-    
     if ($stmt->execute()) {
         header("Location: " . $_SERVER['PHP_SELF'] . "?deleted=1");
         exit();
     } else {
         echo "Error deleting record: " . $conn->error;
     }
-    
     $stmt->close();
 }
 
 // Handle restore action
 if (isset($_GET['restore_id'])) {
     $id = $_GET['restore_id'];
-    
     $stmt = $conn->prepare("UPDATE logistics_table SET deleted_at = NULL WHERE id = ?");
     $stmt->bind_param("i", $id);
-    
     if ($stmt->execute()) {
         header("Location: " . $_SERVER['PHP_SELF'] . "?restored=1");
         exit();
     } else {
         echo "Error restoring record: " . $conn->error;
     }
-    
     $stmt->close();
 }
 
@@ -66,6 +60,7 @@ $deleted_result = $conn->query($deleted_sql);
 <head>
     <title>Logistics Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         /* [All your CSS styles remain exactly the same] */
     </style>
@@ -73,7 +68,7 @@ $deleted_result = $conn->query($deleted_sql);
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-shipping-fast"></i> Logistics Dashboard</h1>
+            <h1><i class="fas fa-shipping-fast"></i> <span class="gold-accent">Logistics</span> Dashboard</h1>
         </header>
         
         <div class="content">

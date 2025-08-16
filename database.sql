@@ -1,8 +1,6 @@
-<<<<<<< HEAD
-USE inventory_db;
-=======
 
->>>>>>> 303baf17d177401e3c3fcbc4d3a65964f486a7c3
+USE inventory_db;
+
 
 CREATE TABLE `logistics_table` (
   `id_logistic` INT NOT NULL AUTO_INCREMENT,
@@ -13,13 +11,14 @@ CREATE TABLE `logistics_table` (
   `status` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id_logistic`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
+//wag kalimutan mag drop ng table, eto yung bagong table natin
 CREATE TABLE `inventory_table` (
   `id_inventory` INT NOT NULL AUTO_INCREMENT,
   `warehouse` VARCHAR(45) NOT NULL,
   `itemname_invent` VARCHAR(45) NOT NULL,
   `stock_invent` INT NOT NULL,
   `restock_invent` INT NOT NULL,
+  `categories`VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id_inventory`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -73,12 +72,6 @@ ADD COLUMN supply VARCHAR(100) NULL,
 ADD COLUMN review VARCHAR(255) NULL;
 
 
-INSERT INTO order_table (customer_name, destination_order, itemname_order, quantity_order, date_of_order) VALUES
-('Juan Dela Cruz', 'BANGKOD', 'Supply Name 1', 300, '2025-08-01'),
-('Maria Santos', 'LIPA CITY', 'Supply Name 2', 500, '2025-08-01'),
-('Pedro Reyes', 'TANAUAN', 'Supply Name 3', 200, '2025-08-02'),
-('Ana Lopez', 'BATANGAS CITY', 'Supply Name 4', 400, '2025-08-02'),
-('Carlos Garcia', 'MALVAR', 'Supply Name 5', 150, '2025-08-03');
 
 ALTER TABLE supplier_table ADD category VARCHAR(45) DEFAULT NULL;
   
@@ -89,11 +82,14 @@ UPDATE supplier_table SET category = 'Stationery' WHERE id_supplier = 1003;
 UPDATE supplier_table SET category = 'Cleaning Supplies' WHERE id_supplier = 1004;
 
 INSERT INTO order_table (customer_name, destination_order, itemname_order, quantity_order, date_of_order) VALUES
-('Liza Gomez', 'Bacolod', 'Stapler', 80, '2025-08-05'),
-('Inventory', 'Warehouse 1', 'Keyboard', 150, '2025-08-02'),
-('Inventory', 'Warehouse 2', 'Mop', 200, '2025-08-03'),
-('Inventory', 'Warehouse 3', 'Pen', 50, '2025-08-04'),
-('Inventory', 'Warehouse 4', 'Stapler', 80, '2025-08-05'); 
+('Inventory', 'Warehouse 4', 'Stapler', 80, '2025-08-05'),
+('Inventory', 'Warehouse 2', 'Keyboard', 150, '2025-08-02'),
+('Inventory', 'Warehouse 2', 'Mouse', 150, '2025-08-02'),
+('Inventory', 'Warehouse 5', 'Mop', 200, '2025-08-03'),
+('Inventory', 'Warehouse 4', 'Pen', 50, '2025-08-04'),
+('Inventory', 'Warehouse 3', 'Chair', 231, '2025-08-04'),
+('Inventory', 'Warehouse 1', 'Desktop', 80, '2025-08-05');
+
 
 SELECT id_supplier, name_supplier, supply FROM supplier_table;
 UPDATE `inventory_db`.`supplier_table` SET `supply` = 'Desktop, Laptop, Monitor, Phone' WHERE (`id_supplier` = '1000');
@@ -105,16 +101,36 @@ UPDATE `inventory_db`.`supplier_table` SET `supply` = 'Mop, Detergent, Brush' WH
 
 
 
+CREATE TABLE warehouse_quantities (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  warehouse VARCHAR(45) NOT NULL,
+  item_name VARCHAR(45) NOT NULL,
+  total_quantity INT NOT NULL DEFAULT 0,
+  last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY (warehouse, item_name)
+);
 
 
 
+CREATE TABLE logistics_table (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    item VARCHAR(255) NOT NULL,
+    destination VARCHAR(100) NOT NULL,
+    pickup_date DATE,
+    delivery_date DATE,
+    status VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
+
+INSERT INTO logistics_table (id, item, destination, delivery_date, pickup_date, status) VALUES
+(1, 'Brief - Black', 'Cebu City', '2025-08-01', '2025-07-30', 'Shipped'),
+(2, 'Hoodie - Blue', 'Davao City', '2025-08-03', '2025-08-01', 'In Transit'),
+(3, 'Cargo Pants', 'Baguio City', '2025-08-05', '2025-08-02', 'Pending'),
+(4, 'Cap - Red', 'Makati City', '2025-08-04', '2025-08-02', 'Shipped');
 
 
 B4B4B8
 C7C8CC
 E3E1D9
 F2EFE5
-=======
-tangina
->>>>>>> 303baf17d177401e3c3fcbc4d3a65964f486a7c3

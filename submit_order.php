@@ -12,17 +12,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $destination = trim($_POST['destination'] ?? '');
         $date_of_order = $_POST['date_of_order'] ?? date('Y-m-d');
         $order_id = filter_var($_POST['id_order'] ?? 0, FILTER_VALIDATE_INT);
+        $supplier_name = trim($_POST['name_supplier'] ?? ''); // Changed from supplier_name to name_supplier
 
         // Validate required fields
         if (empty($selected_item)) {
             throw new Exception("Please select an item.");
         }
+        
         if ($quantity === false) {
             throw new Exception("Invalid quantity. Please enter a positive number.");
         }
+        
         if (empty($destination)) {
             throw new Exception("Destination is required.");
         }
+        
         if (!strtotime($date_of_order)) {
             throw new Exception("Invalid order date.");
         }
@@ -34,29 +38,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $conn->begin_transaction();
 
         try {
-            // 1. Track the quantity in warehouse_quantities table
-            $track_sql = "INSERT INTO warehouse_quantities (warehouse, item_name, total_quantity) 
-                         VALUES (?, ?, ?) 
-                         ON DUPLICATE KEY UPDATE 
-                         total_quantity = total_quantity + VALUES(total_quantity)";
-            $track_stmt = $conn->prepare($track_sql);
-            if (!$track_stmt) {
+            // 1. Update inventory table
+            $inventory_sql = "INSERT INTO inventory_table 
+                            (warehouse, itemname_invent, stock_invent, restock_invent, categories) 
+                            VALUES (?, ?, ?, ?, 'General') 
+                            ON DUPLICATE KEY UPDATE 
+                            stock_invent = stock_invent + VALUES(stock_invent),
+                            restock_invent = restock_invent + VALUES(restock_invent)";
+            
+            $inventory_stmt = $conn->prepare($inventory_sql);
+            if (!$inventory_stmt) {
                 throw new Exception("Prepare failed: " . $conn->error);
             }
-            $track_stmt->bind_param("ssi", $warehouse, $selected_item, $quantity);
-            if (!$track_stmt->execute()) {
-                throw new Exception("Execute failed: " . $track_stmt->error);
+            $inventory_stmt->bind_param("ssii", $warehouse, $selected_item, $quantity, $quantity);
+            if (!$inventory_stmt->execute()) {
+                throw new Exception("Execute failed: " . $inventory_stmt->error);
             }
-            $track_stmt->close();
+            $inventory_stmt->close();
 
-            // 2. Process the order in order_receipt table (without supplier_name)
-            $order_sql = "INSERT INTO order_receipt (item_receipt, quantity_reciept, arrive_receipt, destination_receipt, warehouse) 
-                         VALUES (?, ?, ?, ?, ?)";
+            // 2. Process the order in order_receipt table (now includes supplier)
+            $order_sql = "INSERT INTO order_receipt 
+                         (item_receipt, quantity_reciept, arrive_receipt, destination_receipt, warehouse, supplier_name) 
+                         VALUES (?, ?, ?, ?, ?, ?)";
             $order_stmt = $conn->prepare($order_sql);
             if (!$order_stmt) {
                 throw new Exception("Prepare failed: " . $conn->error);
             }
-            $order_stmt->bind_param("sisss", $selected_item, $quantity, $arrive_date, $destination, $warehouse);
+            $order_stmt->bind_param("sissss", $selected_item, $quantity, $arrive_date, $destination, $warehouse, $supplier_name);
             if (!$order_stmt->execute()) {
                 throw new Exception("Execute failed: " . $order_stmt->error);
             }
@@ -77,24 +85,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $del_stmt->close();
             }
 
-            // Commit transaction
             $conn->commit();
-
-            // Redirect to receipt page
             header("Location: receipt.php?id=" . $receipt_id);
             exit();
 
         } catch (Exception $e) {
-            // Rollback transaction on error
             $conn->rollback();
             throw $e;
         }
 
     } catch (Exception $e) {
-        // Display error message
         die("Error: " . $e->getMessage());
     }
 } else {
     die("Invalid request method.");
 }
-?>

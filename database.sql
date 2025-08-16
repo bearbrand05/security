@@ -152,23 +152,15 @@ INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `s
 INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supplier 2', 'Dwight', 'Keyboard', 'Peripherals', '4.2', 'Okay');
 INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supplier 2', 'Dwight', 'Mouse', 'Peripherals', '4.2', 'Okay');
 INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supplier 2', 'Dwight', 'Headset', 'Peripherals', '4.2', 'Okay');
-INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supllier 3', 'Ralp', 'Chair', 'Furniture', '3.5', 'Decent');
-INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supllier 3', 'Ralp', 'Desk', 'Furniture', '3.5', 'Decent');
-INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supllier 3', 'Ralp', 'Cabinet', 'Furniture', '3.5', 'Decent');
-INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supllier 4', 'Doniel', 'Pen', 'Stationery', '5.0', 'Very Good');
-INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supllier 4', 'Doniel', 'Notebook', 'Stationery', '5.0', 'Very Good');
-INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supllier 4', 'Doniel', 'Stapler', 'Stationery', '5.0', 'Very Good');
+INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supplier 3', 'Ralp', 'Chair', 'Furniture', '3.5', 'Decent');
+INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supplier 3', 'Ralp', 'Desk', 'Furniture', '3.5', 'Decent');
+INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supplier 3', 'Ralp', 'Cabinet', 'Furniture', '3.5', 'Decent');
+INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supplier 4', 'Doniel', 'Pen', 'Stationery', '5.0', 'Very Good');
+INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supplier 4', 'Doniel', 'Notebook', 'Stationery', '5.0', 'Very Good');
+INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supplier 4', 'Doniel', 'Stapler', 'Stationery', '5.0', 'Very Good');
 INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supplier 5', 'Lee', 'Mop', 'Cleaning Supplies', '5.0', 'Very Good');
 INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supplier 5', 'Lee', 'Detergent', 'Cleaning Supplies', '5.0', 'Very Good');
 INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `supply`, `category`, `ratings`, `review`) VALUES ('Supplier 5', 'Lee', 'Brush', 'Cleaning Supplies', '5.0', 'Very Good');
-
-
-UPDATE `inventory_db`.`supplier_table` SET `name_supplier` = 'Supplier 3' WHERE (`id_supplier` = '1008');
-UPDATE `inventory_db`.`supplier_table` SET `name_supplier` = 'Supplier 3' WHERE (`id_supplier` = '1007');
-UPDATE `inventory_db`.`supplier_table` SET `name_supplier` = 'Supplier 3' WHERE (`id_supplier` = '1009');
-UPDATE `inventory_db`.`supplier_table` SET `name_supplier` = 'Supplier 4' WHERE (`id_supplier` = '1010');
-UPDATE `inventory_db`.`supplier_table` SET `name_supplier` = 'Supplier 4' WHERE (`id_supplier` = '1011');
-UPDATE `inventory_db`.`supplier_table` SET `name_supplier` = 'Supplier 4' WHERE (`id_supplier` = '1012');
 
 
 ALTER TABLE order_receipt ADD COLUMN supplier_name VARCHAR(45) AFTER warehouse;

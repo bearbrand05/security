@@ -165,6 +165,18 @@ INSERT INTO `inventory_db`.`supplier_table` (`name_supplier`, `contact_name`, `s
 
 ALTER TABLE order_receipt ADD COLUMN supplier_name VARCHAR(45) AFTER warehouse;
 
+CREATE TABLE `order_receipt` (
+  `id_receipt` INT NOT NULL AUTO_INCREMENT,
+  `item_receipt` VARCHAR(45) NOT NULL,
+  `quantity_reciept` INT NOT NULL,
+  `arrive_receipt` DATE NOT NULL,
+  `destination_receipt` VARCHAR(45) NOT NULL,
+  `warehouse` VARCHAR(1324124)not null,
+  `supplier_name` VARCHAR(234)not null,
+  PRIMARY KEY (`id_receipt`)
+) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
 
 select * from inventory_table;
 >>>>>>> e445f5fa42f2800aa9b2efb0b83b0d5734003343

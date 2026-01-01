@@ -1,9 +1,0 @@
-ORDER RECEIPT
-==============================
-Receipt ID: 1075
-Item: Pen
-Quantity: 50
-Arrival Date: 2025-08-07
-Destination: Warehouse 4
-Generated: 2025-08-16 11:24:05
-==============================

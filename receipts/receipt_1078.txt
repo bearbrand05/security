@@ -1,9 +1,0 @@
-ORDER RECEIPT
-==============================
-Receipt ID: 1078
-Item: Mop
-Quantity: 200
-Arrival Date: 2025-08-06
-Destination: Warehouse 5
-Generated: 2025-08-16 12:15:19
-==============================

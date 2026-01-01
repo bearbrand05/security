@@ -1,9 +1,0 @@
-ORDER RECEIPT
-==============================
-Receipt ID: 1073
-Item: Desktop
-Quantity: 80
-Arrival Date: 2025-08-08
-Destination: Warehouse 1
-Generated: 2025-08-16 08:41:34
-==============================

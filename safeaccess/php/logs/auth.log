@@ -1,0 +1,32 @@
+[2026-01-01 03:52:40] [::1] Registration failed for rheal: Duplicate entry 'rheal' for key 'username'
+[2026-01-01 03:52:44] [::1] Registration successful: rheals
+[2026-01-01 03:52:47] [::1] Login failed for sads
+[2026-01-01 03:52:54] [::1] Login success: rheals
+[2026-01-01 03:56:15] [::1] Login success: rheal
+[2026-01-01 03:57:27] [::1] Registration successful: 123412412
+[2026-01-01 03:58:08] [::1] Registration successful: avocado
+[2026-01-01 03:58:28] [::1] Login success: avocado
+[2026-01-01 07:56:18] [::1] Registration failed for rheal: Duplicate entry 'rheal' for key 'username'
+[2026-01-01 07:56:24] [::1] Registration failed for rheal: Duplicate entry 'rheal' for key 'username'
+[2026-01-01 07:56:35] [::1] Registration successful: hatdog234
+[2026-01-01 07:56:53] [::1] Login success: rheal
+[2026-01-01 07:57:32] [::1] Registration successful: sss
+[2026-01-01 07:58:51] [::1] Login failed for asdasd
+[2026-01-03 00:21:27] [::1] Login failed for sadas
+[2026-01-03 00:22:55] [::1] Login failed for sadas
+[2026-01-03 03:41:24] [::1] Login success: rheal
+[2026-01-03 03:41:39] [::1] Login failed for sada
+[2026-01-03 03:41:41] [::1] Login failed for asdasd
+[2026-01-03 03:41:43] [::1] Login failed for asdasd
+[2026-01-03 03:42:16] [::1] Registration successful: allein
+[2026-01-03 03:42:30] [::1] Login success: allein
+[2026-01-03 03:42:36] [::1] Login failed for asdas
+[2026-01-03 03:42:38] [::1] Login failed for asdasd
+[2026-01-03 03:42:39] [::1] Login failed for asdasd
+[2026-01-03 03:47:08] [::1] Login success: rheal
+[2026-01-03 03:49:02] [::1] Registration successful: rhealserdon
+[2026-01-03 03:49:12] [::1] Login success: rhealserdon
+[2026-01-03 03:49:18] [::1] Login failed for abc
+[2026-01-03 03:49:22] [::1] Login failed for abc
+[2026-01-03 03:49:24] [::1] Login failed for abc
+[2026-01-03 03:49:45] [::1] Login success: rheal
